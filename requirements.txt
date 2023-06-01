@@ -1,13 +1,15 @@
 setuptools_rust
 pyspark==3.4.0
 torch==2.0.0
+pytorch-lightning==1.4.9
 sparktorch==0.2.0
 # transformers==4.11.3
 spark-nlp==4.4.1
 wandb
 scikit-learn
 tweepy
-
-
+nbconvert
+matplotlib
+twint
 
 
