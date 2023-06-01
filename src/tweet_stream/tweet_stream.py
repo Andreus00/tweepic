@@ -2,7 +2,7 @@ import tweepy
 import json
 import datetime
 import twint
-
+from src.dataset.tweet_filter import TweetFilter
 
 class TweetRetriever:
 
@@ -10,12 +10,18 @@ class TweetRetriever:
         with open("data/token.json") as f:
             self.token = json.load(f)
         self.api = tweepy.Client(**self.token)
+        self.tf = TweetFilter()
 
     def tweet_to_list(self, tweet):
         return [tweet.id, tweet.created_at.year, tweet.created_at.month, tweet.created_at.day, tweet.text]
 
     def get_tweet(self, id):
-        return self.tweet_to_list(self.api.get_tweet(id=id, tweet_fields=["created_at", "text"]).data)
+        # return self.tweet_to_list(self.api.get_tweet(id=id, tweet_fields=["created_at", "text"]).data)
+        tweet = self.api.get_tweet(id=id, tweet_fields=["created_at", "text"]).data
+        if tweet == None:
+            return None
+        text, hashtags, mentions = self.tf.filter_tweet(tweet.text)
+        return [tweet.id, tweet.created_at.year, tweet.created_at.month, tweet.created_at.day, text, hashtags, mentions]
     
     def search(self, query, count=10, toDate=datetime.datetime.now() - datetime.timedelta(seconds=9), tweet_fields=["created_at", "text"]):
         print(toDate)
