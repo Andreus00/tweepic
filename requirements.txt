@@ -11,5 +11,6 @@ tweepy
 nbconvert
 matplotlib
 twint
+pyarrow
 
 
