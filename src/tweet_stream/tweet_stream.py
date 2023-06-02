@@ -1,15 +1,15 @@
 import tweepy
 import json
 import datetime
-import twint
 from src.dataset.tweet_filter import TweetFilter
 
 class TweetRetriever:
 
     def __init__(self) -> None:
         with open("data/token.json") as f:
-            self.token = json.load(f)
-        self.api = tweepy.Client(**self.token)
+            self.conf = json.load(f)
+        self.conf["wait_on_rate_limit"] = True
+        self.api = tweepy.Client(**self.conf)
         self.tf = TweetFilter()
 
     def tweet_to_list(self, tweet):
