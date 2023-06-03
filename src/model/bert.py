@@ -8,10 +8,12 @@ from pyspark import SparkConf
 import pyspark
 import numpy as np
 from scipy.spatial import distance
-from pyspark.ml.feature import VectorAssembler
+from pyspark.ml.feature import VectorAssembler, HashingTF
 from pyspark.ml.linalg import Vectors
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 from pyspark.sql.functions import lit 
+import pyspark.sql.functions as F
 
 
 spark = sparknlp.start(gpu=True)
@@ -19,11 +21,12 @@ spark = sparknlp.start(gpu=True)
 # load dataset
 
 df = spark.read.parquet("data/parquet_multi_labels/tweets.parquet")
+df = df.withColumn("text_with_date", F.concat_ws(" <sep> ", df["text"], df["year"].cast("string"), df["month"].cast("string"), df["day"].cast("string"), df["hashtags"], df["mentions"]))
 df.show()
 print(df.count())
 
 document_assembler = DocumentAssembler() \
-.setInputCol("text") \
+.setInputCol("text_with_date") \
 .setOutputCol("document")
 sentence_detector = SentenceDetector() \
 .setInputCols(["document"]) \
@@ -34,15 +37,19 @@ tokenizer = Tokenizer() \
 normalizer = Normalizer() \
 .setInputCols(["token"]) \
 .setOutputCol("normal")
-lemmatizer = LemmatizerModel.pretrained("lemma_antbnc") \
-.setInputCols(["normal"]) \
-.setOutputCol("lemma")
-stopwords_cleaner = StopWordsCleaner() \
-.setInputCols(["lemma"]) \
-.setOutputCol("clean_lemma") \
-.setCaseSensitive(False)
-# hashingTF = HashingTF(inputCol=tokenizer.getOutputCol(), outputCol="features")
+languageDetector = LanguageDetectorDL.pretrained("ld_wiki_tatoeba_cnn_21", "xx")\
+    .setInputCols(["sentence"])\
+    .setOutputCol("language")
+# lemmatizer = LemmatizerModel.pretrained("lemma_antbnc") \
+# .setInputCols(["normal"]) \
+# .setOutputCol("lemma")
+# stopwords_cleaner = StopWordsCleaner() \
+# .setInputCols(["lemma"]) \
+# .setOutputCol("clean_lemma") \
+# .setCaseSensitive(False)
+# hashingTF = HashingTF(inputCol="normal", outputCol="tf")
 
+# https://github.com/JohnSnowLabs/spark-nlp/issues/7357         FOR THE PIPELINE
 
 # https://www.johnsnowlabs.com/understanding-the-power-of-transformers-a-guide-to-sentence-embeddings-in-spark-nlp/
 # sent_xlm_roberta_base, sent_roberta_base
@@ -53,9 +60,10 @@ stopwords_cleaner = StopWordsCleaner() \
 embeddings = XlmRoBertaSentenceEmbeddings.pretrained("sent_xlm_roberta_base", "xx") \
     .setInputCols("document") \
     .setOutputCol("sentence_embeddings")
-nlp_pipeline = Pipeline(stages=[document_assembler, embeddings])
+nlp_pipeline = Pipeline(stages=[document_assembler,sentence_detector, tokenizer, normalizer, languageDetector, embeddings])
 pipeline_model = nlp_pipeline.fit(df)
-texts = df.select("text").collect()
+texts = df.select("text_with_date").collect()
+print(texts[0].text_with_date)
 result = pipeline_model.transform(df)
 
 embeddings = result.select("sentence_embeddings").collect()
@@ -77,43 +85,50 @@ pca_df = spark.createDataFrame(embs,["sentence_embeddings"])
 pca = pyspark.ml.feature.PCA(k=2, inputCol="sentence_embeddings", outputCol="pca_features")
 pca_result = pca.fit(pca_df).transform(pca_df).select("pca_features").toPandas()
 
-l2c = [
-    '2016-brexit.ids'
-    '2014-gazaunderattack.ids'
-    '2013-boston-marathon-bombing.ids'
-    '2015-charliehebdo.ids'
-    '2015-germanwings-crash.ids'
-    '2014-ebola.ids'
-    '2012-uselection.ids'
-    '2016-sismoecuador.ids'
-    '2012-obama-romney.ids'
-    '2014-indyref.ids'
-    '2012-sxsw.ids'
-    '2015-parisattacks.ids'
-    '2016-hijacked-plane-cyprus.ids'
-    '2015-refugeeswelcome.ids'
-    '2014-stpatricksday.ids'
-    '2012-mexican-election.ids'
-    '2012-superbowl.ids'
-    '2016-panamapapers.ids'
-    '2016-irish-ge16.ids'
-    '2015-nepalearthquake.ids'
-    '2016-brussels-airport-explossion.ids'
-    '2015-hurricanepatricia.ids'
-    '2014-ferguson.ids'
-    '2014-ottawashooting.ids'
-    '2014-hongkong-protests.ids'
-    '2014-typhoon-hagupit.ids'
-    '2012-hurricane-sandy.ids'
-    '2012-euro2012.ids'
+classes = [
+    '2016-brexit.ids',
+    '2014-gazaunderattack.ids',
+    '2013-boston-marathon-bombing.ids',
+    '2015-charliehebdo.ids',
+    '2015-germanwings-crash.ids',
+    '2014-ebola.ids',
+    '2012-uselection.ids',
+    '2016-sismoecuador.ids',
+    '2012-obama-romney.ids',
+    '2014-indyref.ids',
+    '2012-sxsw.ids',
+    '2015-parisattacks.ids',
+    '2016-hijacked-plane-cyprus.ids',
+    '2015-refugeeswelcome.ids',
+    '2014-stpatricksday.ids',
+    '2012-mexican-election.ids',
+    '2012-superbowl.ids',
+    '2016-panamapapers.ids',
+    '2016-irish-ge16.ids',
+    '2015-nepalearthquake.ids',
+    '2016-brussels-airport-explossion.ids',
+    '2015-hurricanepatricia.ids',
+    '2014-ferguson.ids',
+    '2014-ottawashooting.ids',
+    '2014-hongkong-protests.ids',
+    '2014-typhoon-hagupit.ids',
+    '2012-hurricane-sandy.ids',
+    '2012-euro2012.ids',
     '2016-lahoreblast.ids'
 ]
-l2c = {l:i for i,l in enumerate(l2c)}
+l2c = {l:i for i,l in enumerate(classes)}
 print(l2c)
-labes = [l2c[row.label] for row in df.select("label").collect()]
+labels = [l2c[row.label] for row in df.select("label").collect()]
 
 
-plt.scatter(pca_result["pca_features"].apply(lambda v: v[0]), pca_result["pca_features"].apply(lambda v: v[1]), c=labes, cmap='viridis')
+plt.scatter(pca_result["pca_features"].apply(lambda v: v[0]), pca_result["pca_features"].apply(lambda v: v[1]), c=labels, cmap='viridis', label=labels)
+plt.xlabel("PC1")
+plt.ylabel("PC2")
+plt.title("PCA")
+# plt.legend(
+#     handles=[mpatches.Patch(color='C'+str(i), label=classes[i]) for i in range(len(classes))],
+#     bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=1.0
+# )
 plt.show()
 
 # result1 = pipeline_model.transform(spark.createDataFrame([["Messi ha vinto il mondiale."]], ["text"]))
