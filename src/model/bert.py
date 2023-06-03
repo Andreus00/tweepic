@@ -49,9 +49,9 @@ languageDetector = LanguageDetectorDL.pretrained("ld_wiki_tatoeba_cnn_21", "xx")
 # .setCaseSensitive(False)
 # hashingTF = HashingTF(inputCol="normal", outputCol="tf")
 
-# https://github.com/JohnSnowLabs/spark-nlp/issues/7357         FOR THE PIPELINE
 
-# https://www.johnsnowlabs.com/understanding-the-power-of-transformers-a-guide-to-sentence-embeddings-in-spark-nlp/
+
+
 # sent_xlm_roberta_base, sent_roberta_base
 # embeddings = RoBertaSentenceEmbeddings.pretrained("sent_roberta_base", "en") \
 
