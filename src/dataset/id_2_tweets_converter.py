@@ -77,9 +77,25 @@ class Id2TweetsConverter:
         return sampled_tweets
 
 
+def remove_RT():
+    spark = SparkSession.builder.getOrCreate()
+
+    old_df = spark.read.parquet("data/parquet_multi_labels/tweets.parquet")
+
+    # remove RT from the beginning of the text
+    old_df = old_df.withColumn("text", regexp_replace("text", "^RT ", ""))
+
+    # save the dataframe
+    old_df.write.parquet("data/parquet_multi_labels_no_RT/tweets.parquet")
+
+    print("Dataframe:")
+    old_df.show()
+
+
+
 def generate_dataset():
     converter = Id2TweetsConverter()
-    sampled_tweets = converter.get_n_tweets(n=100)
+    sampled_tweets = converter.get_n_tweets(n=150)
     df = converter.spark.createDataFrame(sampled_tweets, ["label", "id", "year", "month", "day", "text", "mentions", "hashtags"])
 
     # old_df = converter.spark.read.parquet("data/parquet_bkp/tweets.parquet")
@@ -104,3 +120,4 @@ def test():
     # check statistics of the dataframe
     df.describe().show()
     
+

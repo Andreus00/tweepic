@@ -12,5 +12,5 @@ nbconvert
 matplotlib
 twint
 pyarrow
-
+sentencepiece
 

@@ -35,13 +35,15 @@ class TweetFilter():
         hashtag = re.sub(r'([A-Z]?[a-z]+|[0-9]+)', r' \1 ', hashtag)
         hashtag = re.sub(r'\s+', ' ', hashtag).strip()
         return hashtag
-
-    def filter_tweet(self, tweet):
-        tweet = self.filter_urls(tweet)
-        tweet, hashtags = self.filter_hashtags(tweet)
-        tweet, mentions = self.filter_mentions(tweet)
-        return tweet, hashtags, mentions
     
+
+    def filter_tweet(self, tweet: str):
+        tweet = tweet.strip("RT ")
+        _ = self.filter_urls(tweet)
+        _, hashtags = self.filter_hashtags(_)
+        _, mentions = self.filter_mentions(_)
+        return tweet, hashtags, mentions
+        
 
 
 if __name__ == "__main__":
