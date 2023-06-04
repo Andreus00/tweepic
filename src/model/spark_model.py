@@ -14,6 +14,9 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from pyspark.sql.functions import lit 
 import pyspark.sql.functions as F
+from pyspark.sql.functions import udf
+import src.model.embedding_average as embedding_average
+from sklearn.decomposition import PCA
 
 
 def main():
@@ -27,7 +30,7 @@ def main():
 
 
     document_assembler = DocumentAssembler() \
-    .setInputCol("text") \
+    .setInputCol("text_with_date") \
     .setOutputCol("document")
     sentence_detector = SentenceDetector() \
     .setInputCols(["document"]) \
@@ -35,9 +38,6 @@ def main():
     tokenizer = Tokenizer() \
     .setInputCols("sentence") \
     .setOutputCol("token")
-    # normalizer = Normalizer() \
-    # .setInputCols(["token"]) \
-    # .setOutputCol("normal")
     # languageDetector = LanguageDetectorDL.pretrained("ld_wiki_tatoeba_cnn_21", "xx")\
     #     .setInputCols(["sentence"])\
     #     .setOutputCol("language")
@@ -53,38 +53,29 @@ def main():
 
 
     embeddings = XlmRoBertaEmbeddings.pretrained("twitter_xlm_roberta_base", "xx") \
-    .setInputCols("sentence", "token") \
+    .setInputCols("document", "token") \
     .setOutputCol("word_embeddings")
-    # tokenizer2, embeddings = huggingface_model.get_model()
-    nlp_pipeline = Pipeline(stages=[document_assembler, sentence_detector, tokenizer, embeddings])
-    pipeline_model = nlp_pipeline.fit(df)
-    texts = df.select("text").collect()
-    hashtags = df.select("hashtags").collect()
-    # print("One sentence", texts[0])
-    result = pipeline_model.transform(df)
-    print("Result", result)
-    # print( result.select("document").collect())
-    # print( result.select("token"))
-    embeddings = result.select("word_embeddings").collect()
-    # print("Embeddings", len(embeddings[0]))
-    print("Type embeddings", type(embeddings))
-    print("Type embeddings[0]", type(embeddings[0]))
-    print("Type embeddings[0][0]", type(embeddings[0][0]))
-    embs = []
-    for i,row in enumberte(embeddings):
-        sent_embs = []
-        for word in row[0]:
-            sent_embs.append((Vectors.dense(word[5]),))
-        # hashtag_embs = []
-        # for hashtag in hashtags[i]:
-        #     hashtag_embs.append((Vectors.dense(word[5]),))    ##### DA FARE
-        #  do the mean
-        # sentence_embeddings = np.mean(sent_embs, axis=0).flatten().tolist() + 
-        embs.append((Vectors.dense(np.mean(sent_embs, axis=0).flatten().tolist()),))
-    pca_df = spark.createDataFrame(embs,["sentence_embeddings"])
-    pca = pyspark.ml.feature.PCA(k=3, inputCol="sentence_embeddings", outputCol="pca_features")
-    pca_result = pca.fit(pca_df).transform(pca_df).select("pca_features").toPandas()
 
+    embeddingsSentence = SentenceEmbeddings() \
+                .setInputCols(["document", "word_embeddings"]) \
+                .setOutputCol("sentence_embeddings") \
+                .setPoolingStrategy("AVERAGE")
+    nlp_pipeline = Pipeline(stages=[document_assembler, sentence_detector, tokenizer, embeddings, embeddingsSentence])
+    pipeline_model = nlp_pipeline.fit(df)
+    texts = df.select("text_with_date").collect()
+    hashtags = df.select("hashtags").collect()
+    result = pipeline_model.transform(df)
+    result.show()
+    sentence_embeddings = []
+    sentence_embeddings_row =result.select("sentence_embeddings").collect()
+    for i, row in enumerate(sentence_embeddings_row):
+        sentence_embeddings.append(row[0][0].embeddings)
+    embeddings = result.select("word_embeddings").collect()
+
+    
+    pca = PCA(n_components=3)
+    pca_result = pca.fit_transform(sentence_embeddings)
+    
     classes = [
         '2016-brexit.ids',
         '2014-gazaunderattack.ids',
@@ -120,16 +111,17 @@ def main():
     print(l2c)
     labels = [l2c[row.label] for row in df.select("label").collect()]
 
+    #plot
     fig, ax = plt.subplots()
     ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(pca_result["pca_features"].apply(lambda v: v[0]), pca_result["pca_features"].apply(lambda v: v[1]), pca_result["pca_features"].apply(lambda v: v[2]), c=labels, cmap='viridis', label=labels)
     ax.set_xlabel("PC1")
     ax.set_ylabel("PC2")
     ax.set_zlabel("PC3")
     ax.set_title("PCA")
-    
-    plt.savefig("pca3.png")
+    ax.scatter(pca_result[:,0], pca_result[:,1], pca_result[:,2], cmap='viridis', c=labels, label=labels)
+    ax.grid()
     plt.show()
+    plt.savefig("pca.png")
 
     q = 12
     query = texts[q]
@@ -137,11 +129,11 @@ def main():
     for i,tweet in enumerate(texts):
         if i == q:
             continue
-        sim = 1-distance.cosine(embs[q][0],embs[i][0])
+        sim = 1-distance.cosine(sentence_embeddings[q],sentence_embeddings[i])
         d[tweet] = (labels[i], sim)
         
     print('Most similar to: ',query, "Class: ", labels[q])
     print('----------------------------------------')
-    for idx,x in enumerate(sorted(d.items(), key=lambda x:x[1][1], reverse=True)):
+    for idx,x in enumerate(sorted(d.items(), key=lambda x: x[1][1], reverse=True)):
         print(idx+1, "Sim: ", round(x[1][1],2), "Class: ", x[1][0], "Tweet: ", x[0])
 
