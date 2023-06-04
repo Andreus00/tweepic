@@ -7,11 +7,9 @@ Tweets topic analyzer
 
 
 ### Urgent:
-- [x] Finetune XLM-Roberta on tweets or import a pretrained model
-- [x] Check if the tweet is a retweet and remove the "RT" from the tweet
-- [x] Plot the cluster of tweets
-- [ ] step in the pipeline that averages the embeddings of the words in the tweet
 - [ ] Cluster the tweets
+  - [ ] Use the embeddings of the tweets to find an online cluster
+  - [ ] Use the embeddings of the words to crate the edges of the graph
 
 
 ### Not urgent:
@@ -29,6 +27,10 @@ Tweets topic analyzer
 - [ ] Move pca to the end of the pipeline
 
 ### Done
+- [x] Finetune XLM-Roberta on tweets or import a pretrained model
+- [x] Check if the tweet is a retweet and remove the "RT" from the tweet
+- [x] Plot the cluster of tweets
+- [x] step in the pipeline that averages the embeddings of the words in the tweet
 
 
 ## Links
