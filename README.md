@@ -8,8 +8,9 @@ Tweets topic analyzer
 
 ### Urgent:
 - [ ] Cluster the tweets
-  - [ ] Use the embeddings of the tweets to find an online cluster
-  - [ ] Use the embeddings of the words to crate the edges of the graph
+- [ ] Use the embeddings of the tweets to find an online cluster
+- [ ] Use the embeddings of the words to crate the edges of the graph
+
 
 
 ### Not urgent:
@@ -18,6 +19,8 @@ Tweets topic analyzer
 - [ ] Change nicknames to User names
 - [ ] Use information of like and retweets
 - [ ] Check the number of followers in order to filter out irrelevant tweets (only during the online phase)
+- [ ] Bias of language
+- [ ] Embeddings of hashtags as another "Pipeline"
 
 
 ### Extras:
@@ -44,3 +47,4 @@ Tweets topic analyzer
 - Papers
   - https://link.springer.com/article/10.1007/s12065-021-00696-6
   - https://arxiv.org/pdf/1505.05657v1.pdf
+  - https://medium.com/analytics-vidhya/congressional-tweets-using-sentiment-analysis-to-cluster-members-of-congress-in-pyspark-10afa4d1556e

@@ -95,14 +95,14 @@ def remove_RT():
 
 def generate_dataset():
     converter = Id2TweetsConverter()
-    sampled_tweets = converter.get_n_tweets(n=150)
+    sampled_tweets = converter.get_n_tweets(n=100)
     df = converter.spark.createDataFrame(sampled_tweets, ["label", "id", "year", "month", "day", "text", "mentions", "hashtags"])
 
     # old_df = converter.spark.read.parquet("data/parquet_bkp/tweets.parquet")
     # df = df.union(old_df)
 
     # save the dataframe
-    df.write.parquet("data/parquet_multi_labels/tweets.parquet")
+    df.write.parquet("data/parquet/tweets.parquet")
 
     print("Dataframe:")
     df.show()
@@ -110,7 +110,7 @@ def generate_dataset():
 def test():
     converter = Id2TweetsConverter()
     tweets = converter.open_all_files()
-    sampled_tweets = converter.select_n_tweets(tweets, n=10)
+    sampled_tweets = converter.select_n_tweets(tweets, n=100)
     sampled_tweets = converter.id_2_tweet(sampled_tweets)
     df = converter.spark.createDataFrame(sampled_tweets, ["label", "id", "year", "month", "day", "text", "mentions", "hashtags"])
 

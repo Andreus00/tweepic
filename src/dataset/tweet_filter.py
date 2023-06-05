@@ -8,7 +8,7 @@ class TweetFilter():
         self.mentions = []
 
     def filter_urls(self, text):
-        return re.sub(r"http\S+", "", text)
+        return re.sub(r"http\S+", "http", text)
 
     def filter_hashtags(self, text):
         hashtags = re.findall(r'#(\w+)', text)
@@ -22,10 +22,11 @@ class TweetFilter():
     def filter_mentions(self, text):
         mentions = ", ".join(re.findall(r'@(\w+)', text))
 
-        text = re.sub(r'@(\w+)', r' \1 ', text)
+        # text = re.sub(r'@(\w+)', r' \1 ', text)
+        text = re.sub(r'@(\w+)', "@user", text)
 
-        # Remove extra spaces
-        text = re.sub(r'\s+', ' ', text).strip()
+        # # Remove extra spaces
+        # text = re.sub(r'\s+', ' ', text).strip()
 
         # Take the name of the user
         return text, mentions
@@ -38,10 +39,12 @@ class TweetFilter():
     
 
     def filter_tweet(self, tweet: str):
-        tweet = tweet.strip("RT ")
-        _ = self.filter_urls(tweet)
-        _, hashtags = self.filter_hashtags(_)
-        _, mentions = self.filter_mentions(_)
+        tweet = tweet.strip("RT")
+        tweet = tweet.strip()
+        tweet =  tweet.replace('\n', " ")
+        tweet = self.filter_urls(tweet)
+        _, hashtags = self.filter_hashtags(tweet)  # keep hashtags
+        tweet, mentions = self.filter_mentions(tweet)
         return tweet, hashtags, mentions
         
 
