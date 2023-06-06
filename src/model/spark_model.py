@@ -21,14 +21,17 @@ from pyspark.ml.clustering import KMeans
 from pyspark.ml.clustering import BisectingKMeans
 from pyspark.ml.evaluation import ClusteringEvaluator
 from pyspark.ml.linalg import Vectors, VectorUDT
-from src.model.cluster import TweetClusterPreprocessing
+from pyspark.ml.classification import RandomForestClassifier
+from pyspark.ml.feature import BucketedRandomProjectionLSH
+from src.model.cluster import TweetClusterPreprocessing, GraphGenerator, LabelsToIndex
+from src.model import pipeline
 
 
 def load_data(spark):
     # load dataset
-    df = spark.read.parquet("data/parquet_big/tweets.parquet")
+    df = spark.read.parquet("data/parquet/tweets.parquet")
     data = [
-    ["chatgpt","1123", "2016", "7", "31", "ChatGPT's sophisticated natural language processing capabilities enable it to generate human-like responses to a wide range of queries.", "", ""],
+    ["chatgpt","1123", "2016", "7", "31", "ChatGPT's sophisticated natural language processing capabilities enable it to generate human-like responses to a wide range of queries.", "chatgpt", ""],
     ["chatgpt","1124", "2016", "7", "31", "With its comprehensive training on diverse topics, ChatGPT can understand and generate text on a wide range of subjects.", "", ""],
     ["2016-panamapapers.ids","1123", "2016", "6", "25", "A diabetic food is any pathology that results directly from peripheral arterial disease.", "", ""],
     ["chatgpt","1126", "2019", "4", "20", "L'intelligenza artificiale è in grado di capire il linguaggio umano e fornire risposte complesse.", "", ""],
@@ -44,106 +47,18 @@ def load_data(spark):
     df = df_test.union(df)
     # df = df.withColumn("text_with_info", F.concat_ws(" <sep> ", df["text"], df["year"].cast("string"), df["month"].cast("string"), df["day"].cast("string"), df["hashtags"], df["mentions"]))
     df = df.withColumn("text_with_info", F.concat_ws(" <sep> ", df["text"], df["hashtags"], df["mentions"]))
+    df = df.filter(df["text_with_info"] != "")
     df.show()
     print(df.count())
     return df
 
 
-def create_pipeline(label_count):
-    list_to_vector_udf = udf(lambda l: Vectors.dense(l), VectorUDT())
+
+def slice_df(df, spark, start, end):
+    return spark.createDataFrame(df.limit(end).tail(end - start))
 
 
-    document_assembler = DocumentAssembler() \
-        .setInputCol("text") \
-        .setOutputCol("document")
-    # document_assembler2 = DocumentAssembler() \
-    #     .setInputCol("hashtags") \
-    #     .setOutputCol("hashtags_document")
-    sentence_detector = SentenceDetector() \
-        .setInputCols(["document"]) \
-        .setOutputCol("sentence")
-    tokenizer = Tokenizer() \
-        .setInputCols("sentence") \
-        .setOutputCol("token")
-    embeddingsWord = XlmRoBertaEmbeddings.pretrained("twitter_xlm_roberta_base", "xx") \
-        .setInputCols("document", "token") \
-        .setOutputCol("word_embeddings") \
-        .setCaseSensitive(True) 
-    embeddingsSentence = SentenceEmbeddings() \
-        .setInputCols(["document", "word_embeddings"]) \
-        .setOutputCol("sentence_embeddings") \
-        .setPoolingStrategy("AVERAGE")
-    # embeddings_bert = XlmRoBertaSentenceEmbeddings.pretrained("sent_xlm_roberta_base", "xx") \
-    # .setInputCols("document") \
-    # .setOutputCol("sentence_embeddings")\
-    # .setCaseSensitive(True) \
-    # .setMaxSentenceLength(512)
-
-    
-    cluster_preprocess = TweetClusterPreprocessing(inputCol="sentence_embeddings", outputCol="cluster_features")
-    
-    # BisectingKMeans()
-    kmeans  = BisectingKMeans() \
-        .setK(label_count) \
-        .setSeed(1) \
-        .setFeaturesCol("cluster_features") \
-        .setPredictionCol("cluster") \
-        .setDistanceMeasure("cosine")
-
-    # kmeans_evaluator = ClusteringEvaluator(
-    #     predictionCol='cluster',
-    #     featuresCol='cluster_features'
-    # )
-    # languageDetector = LanguageDetectorDL.pretrained("ld_wiki_tatoeba_cnn_21", "xx")\
-    #     .setInputCols(["sentence"])\
-    #     .setOutputCol("language")
-    # lemmatizer = LemmatizerModel.pretrained("lemma_antbnc") \
-    # .setInputCols(["normal"]) \
-    # .setOutputCol("lemma")
-    # stopwords_cleaner = StopWordsCleaner() \
-    # .setInputCols(["lemma"]) \
-    # .setOutputCol("clean_lemma") \
-    # .setCaseSensitive(False)
-    # hashingTF = HashingTF(inputCol="normal", outputCol="tf")
-
-    return Pipeline(stages=[document_assembler, sentence_detector, tokenizer, embeddingsWord, embeddingsSentence, cluster_preprocess, kmeans])
-    
-
-
-
-def main():
-    spark = sparknlp.start(gpu=True)
-
-    df = load_data(spark)
-
-    df = df.filter(df["text"] == "")
-
-    df = df.limit(313)
-
-    df.subtract(df.limit(309)).show()
-    
-    label_count = len(df.groupBy("label").count().collect())
-    print(df.groupBy("label").count().collect())
-
-    print(label_count)
-
-    nlp_pipeline = create_pipeline(label_count=label_count)
-
-    pipeline_model = nlp_pipeline.fit(df)
-
-    texts = df.select("text").collect()
-    hashtags = df.select("hashtags").collect()
-    
-    result = pipeline_model.transform(df)
-    result.show()
-    
-    sentence_embeddings = np.asarray(result.select("cluster_features").collect())
-    sentence_embeddings = sentence_embeddings.reshape(sentence_embeddings.shape[0], sentence_embeddings.shape[2])
-    
-    word_embeddings = result.select("word_embeddings").collect()
-    
-    clusters = [x.cluster for x in result.select("cluster").collect()]
-
+def init_labesl():
 
     classes = [
         '2014-gazaunderattack.ids',
@@ -176,28 +91,20 @@ def main():
         '2016-brexit.ids',
         '2016-brussels-airport-explossion.ids',
         '2016-lahoreblast.ids',
+        '2014-sydneysiege.ids',
         'chatgpt'
     ]
     classes.sort()
 
-    l2c = {l:i for i,l in enumerate(classes)}
-    labels = [l2c[row.label] for row in df.select("label").collect()]
-
-    plot_cluster(sentence_embeddings, labels, clusters)
-
-    text_similarity(texts, sentence_embeddings, labels, q=10)
-
-
-
-
-def plot_cluster(sentence_embeddings, labels, clusters):
+    return {l:i for i,l in enumerate(classes)}
+def plot_cluster(sentence_embeddings, labels, clusters, rf_pred=None):
 
     # two plots side by side
     # fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
 
     pca = PCA(n_components=3)
     pca_result = pca.fit_transform(sentence_embeddings)
-    fig, (ax1,ax2) = plt.subplots(1, 2, subplot_kw=dict(projection='3d'), figsize=(12, 4))
+    fig, (ax1,ax2, ax3) = plt.subplots(1, 3, subplot_kw=dict(projection='3d'), figsize=(12, 4))
     # ax1 = fig.add_subplot(121, projection='3d')
     ax1.set_xlabel("PC1")
     ax1.set_ylabel("PC2")
@@ -206,15 +113,26 @@ def plot_cluster(sentence_embeddings, labels, clusters):
     ax1.scatter(pca_result[:,0], pca_result[:,1], pca_result[:,2], cmap='viridis', c=labels, label=labels)
     ax1.grid()
 
-    # ax2 = fig.add_subplot(122, projection='3d')
-    ax2.set_xlabel("PC1")
-    ax2.set_ylabel("PC2")
-    ax2.set_zlabel("PC3")
-    ax2.set_title("Clusters")
-    ax2.scatter(pca_result[:,0], pca_result[:,1], pca_result[:,2], cmap='viridis', c=clusters, label=clusters)
-    ax2.grid()
+    if clusters:
 
-    plt.legend()
+        # ax2 = fig.add_subplot(122, projection='3d')
+        ax2.set_xlabel("PC1")
+        ax2.set_ylabel("PC2")
+        ax2.set_zlabel("PC3")
+        ax2.set_title("Clusters")
+        ax2.scatter(pca_result[:,0], pca_result[:,1], pca_result[:,2], cmap='viridis', c=clusters, label=clusters)
+        ax2.grid()
+
+    if rf_pred:
+
+        # ax2 = fig.add_subplot(122, projection='3d')
+        ax3.set_xlabel("PC1")
+        ax3.set_ylabel("PC2")
+        ax3.set_zlabel("PC3")
+        ax3.set_title("RF")
+        ax3.scatter(pca_result[:,0], pca_result[:,1], pca_result[:,2], cmap='viridis', c=rf_pred, label=rf_pred)
+        ax3.grid()
+
     plt.show()
     plt.savefig("pca.png")
 
@@ -233,4 +151,77 @@ def text_similarity(texts, sentence_embeddings, labels, q=0):
     print('----------------------------------------')
     for idx,x in enumerate(sorted(d.items(), key=lambda x: x[1][1], reverse=True)):
         print(idx+1, "Sim: ", round(x[1][1],2), "Class: ", x[1][0], "Tweet: ", x[0])
+
+
+
+
+
+def main():
+
+    FRANCESCO = True # Always True for gay people <3
+
+    # create label to index dictionary
+    l2c = init_labesl()
+    
+    # init spark session
+    spark = sparknlp.start(gpu=True, memory="24G", params={"spark.jars.packages": "graphframes:graphframes:0.8.1-spark3.0-s_2.12"})
+
+    
+    from graphframes import GraphFrame
+
+    # g = GraphFrame(v, e)
+
+    # load data
+    df = load_data(spark)
+    
+    # get label count
+    label_count = len(df.groupBy("label").count().collect())
+
+    # create pipeline
+    if FRANCESCO:
+        nlp_pipeline = pipeline.create_pipeline2(label_count=label_count, l2c=l2c)
+    else:
+        nlp_pipeline, graph_pipeline = pipeline.create_pipeline(label_count=label_count, l2c=l2c)
+
+    # fit and transform pipeline
+
+    pipeline_model = nlp_pipeline.fit(df)
+    result = pipeline_model.transform(df)
+
+    if not FRANCESCO:
+        graph_input = result.select("id", "sentence_embeddings", "word_embeddings")
+        graph_pipeline_model = graph_pipeline.fit(graph_input)
+        graph_result = graph_pipeline_model.transform(graph_input)
+        
+
+    
+    # print stuff
+    result.show()
+    if FRANCESCO:
+        # print(len(result.select("hashtag_embeddings").collect()[0]))
+        # print(len(result.select("final_embeddings").collect()[0]))
+        # print(result.select("sentence_embeddings").collect()[0])
+        print(result.take(1))
+    else:
+        # for el in (graph_result.select("hashes").collect()[0:3]):
+        #     print(el)
+        graph_result.filter(F.col("datasetA.id") != F.col("datasetB.id")).show()
+    
+    sentence_embeddings = np.asarray(result.select("sentence_embeddings").collect())
+    # get sentence embeddings
+    sentence_embeddings = sentence_embeddings.reshape(sentence_embeddings.shape[0], -1)
+
+    # get texts, clusters and rf predictions
+    texts = result.select("text").collect()
+    clusters = None if FRANCESCO else [x.cluster for x in result.select("cluster").collect()]
+    rf_pred = None if FRANCESCO else result.select("prediction").collect()
+    lsh_pred = None if FRANCESCO else graph_result.select("distance").collect()
+
+    # get labels
+    labels = [l2c[row.label] for row in df.select("label").collect()]
+
+    # plots
+    # plot_cluster(sentence_embeddings, labels, clusters, rf_pred=rf_pred)
+    text_similarity(texts, sentence_embeddings, labels, q=10)
+
 

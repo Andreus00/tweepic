@@ -95,8 +95,9 @@ def remove_RT():
 
 def generate_dataset():
     converter = Id2TweetsConverter()
-    sampled_tweets = converter.get_n_tweets(n=100)
+    sampled_tweets = converter.get_n_tweets(n=290)
     df = converter.spark.createDataFrame(sampled_tweets, ["label", "id", "year", "month", "day", "text", "mentions", "hashtags"])
+    df = df.withColumn("text", regexp_replace("text", "^RT ", ""))
 
     # old_df = converter.spark.read.parquet("data/parquet_bkp/tweets.parquet")
     # df = df.union(old_df)

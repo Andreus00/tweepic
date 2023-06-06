@@ -10,7 +10,9 @@ Tweets topic analyzer
 - [ ] Cluster the tweets
 - [ ] Use the embeddings of the tweets to find an online cluster
 - [ ] Use the embeddings of the words to crate the edges of the graph
-
+- [ ] Add time feature to the final embeddings
+- [ ] Embeddings of hashtags as another "Pipeline"
+- [x] Add random forest to the pipeline
 
 
 ### Not urgent:
@@ -20,7 +22,9 @@ Tweets topic analyzer
 - [ ] Use information of like and retweets
 - [ ] Check the number of followers in order to filter out irrelevant tweets (only during the online phase)
 - [ ] Bias of language
-- [ ] Embeddings of hashtags as another "Pipeline"
+- [ ] Try Universal Sentence Encoder
+- [ ] Every Operation in the pipeline
+
 
 
 ### Extras:
