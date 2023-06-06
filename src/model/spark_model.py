@@ -23,13 +23,14 @@ from pyspark.ml.evaluation import ClusteringEvaluator
 from pyspark.ml.linalg import Vectors, VectorUDT
 from pyspark.ml.classification import RandomForestClassifier
 from pyspark.ml.feature import BucketedRandomProjectionLSH
-from src.model.cluster import TweetClusterPreprocessing, GraphGenerator, LabelsToIndex
+from src.model.cluster import TweetClusterPreprocessing, GetTopNNeighbors, LabelsToIndex
 from src.model import pipeline
+from pyspark.storagelevel import StorageLevel
 
 
 def load_data(spark):
     # load dataset
-    df = spark.read.parquet("data/parquet/tweets.parquet")
+    df = spark.read.parquet("data/parquet_big/tweets.parquet")
     data = [
     ["chatgpt","1123", "2016", "7", "31", "ChatGPT's sophisticated natural language processing capabilities enable it to generate human-like responses to a wide range of queries.", "chatgpt", ""],
     ["chatgpt","1124", "2016", "7", "31", "With its comprehensive training on diverse topics, ChatGPT can understand and generate text on a wide range of subjects.", "", ""],
@@ -45,9 +46,15 @@ def load_data(spark):
     
     df_test = spark.createDataFrame(data, ["label", "id", "year", "month", "day", "text", "hashtags", "mentions"])
     df = df_test.union(df)
+
+    df = df.filter(df["text"] != "")
+    df = df.filter(df["year"] != "")
+    df = df.filter(df["label"] != "")
+    df = df.filter(df["month"] != "")
+    df = df.filter(df["day"] != "")
+
     # df = df.withColumn("text_with_info", F.concat_ws(" <sep> ", df["text"], df["year"].cast("string"), df["month"].cast("string"), df["day"].cast("string"), df["hashtags"], df["mentions"]))
     df = df.withColumn("text_with_info", F.concat_ws(" <sep> ", df["text"], df["hashtags"], df["mentions"]))
-    df = df.filter(df["text_with_info"] != "")
     df.show()
     print(df.count())
     return df
@@ -158,13 +165,13 @@ def text_similarity(texts, sentence_embeddings, labels, q=0):
 
 def main():
 
-    FRANCESCO = True # Always True for gay people <3
+    FRANCESCO = False # Always True for gay people <3
 
     # create label to index dictionary
     l2c = init_labesl()
     
     # init spark session
-    spark = sparknlp.start(gpu=True, memory="24G", params={"spark.jars.packages": "graphframes:graphframes:0.8.1-spark3.0-s_2.12"})
+    spark = sparknlp.start(gpu=True, memory="32G", params={"spark.jars.packages": "graphframes:graphframes:0.8.1-spark3.0-s_2.12"})
 
     
     from graphframes import GraphFrame
@@ -189,9 +196,11 @@ def main():
     result = pipeline_model.transform(df)
 
     if not FRANCESCO:
-        graph_input = result.select("id", "sentence_embeddings", "word_embeddings")
+        graph_input = result.select("id", "sentence_embeddings")
+        result.persist(storageLevel=StorageLevel.DISK_ONLY)
         graph_pipeline_model = graph_pipeline.fit(graph_input)
         graph_result = graph_pipeline_model.transform(graph_input)
+        print("## GRAPH DONE ##")
         
 
     
@@ -205,7 +214,9 @@ def main():
     else:
         # for el in (graph_result.select("hashes").collect()[0:3]):
         #     print(el)
-        graph_result.filter(F.col("datasetA.id") != F.col("datasetB.id")).show()
+        graph_result.show()
+    
+    exit(0)
     
     sentence_embeddings = np.asarray(result.select("sentence_embeddings").collect())
     # get sentence embeddings
@@ -215,13 +226,12 @@ def main():
     texts = result.select("text").collect()
     clusters = None if FRANCESCO else [x.cluster for x in result.select("cluster").collect()]
     rf_pred = None if FRANCESCO else result.select("prediction").collect()
-    lsh_pred = None if FRANCESCO else graph_result.select("distance").collect()
 
     # get labels
     labels = [l2c[row.label] for row in df.select("label").collect()]
 
     # plots
     # plot_cluster(sentence_embeddings, labels, clusters, rf_pred=rf_pred)
-    text_similarity(texts, sentence_embeddings, labels, q=10)
+    # text_similarity(texts, sentence_embeddings, labels, q=10)
 
 

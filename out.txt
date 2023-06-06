@@ -1,0 +1,896 @@
+23/06/07 00:43:52 WARN Utils: Your hostname, andrea-Pc resolves to a loopback address: 127.0.1.1; using 192.168.1.38 instead (on interface enp7s0)
+23/06/07 00:43:52 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Ivy Default Cache set to: /home/andrea/.ivy2/cache
+The jars for the packages stored in: /home/andrea/.ivy2/jars
+com.johnsnowlabs.nlp#spark-nlp-gpu_2.12 added as a dependency
+graphframes#graphframes added as a dependency
+:: resolving dependencies :: org.apache.spark#spark-submit-parent-b0639dd7-fdb9-4dba-ad37-2080350837b1;1.0
+	confs: [default]
+	found com.johnsnowlabs.nlp#spark-nlp-gpu_2.12;4.4.1 in central
+	found com.typesafe#config;1.4.2 in central
+	found org.rocksdb#rocksdbjni;6.29.5 in central
+	found com.amazonaws#aws-java-sdk-bundle;1.11.828 in central
+	found com.github.universal-automata#liblevenshtein;3.0.0 in central
+	found com.google.protobuf#protobuf-java-util;3.0.0-beta-3 in central
+	found com.google.protobuf#protobuf-java;3.0.0-beta-3 in central
+	found com.google.code.gson#gson;2.3 in central
+	found it.unimi.dsi#fastutil;7.0.12 in central
+	found org.projectlombok#lombok;1.16.8 in central
+	found com.google.cloud#google-cloud-storage;2.16.0 in central
+	found com.google.guava#guava;31.1-jre in central
+	found com.google.guava#failureaccess;1.0.1 in central
+	found com.google.guava#listenablefuture;9999.0-empty-to-avoid-conflict-with-guava in central
+	found com.google.errorprone#error_prone_annotations;2.16 in central
+	found com.google.j2objc#j2objc-annotations;1.3 in central
+	found com.google.http-client#google-http-client;1.42.3 in central
+	found io.opencensus#opencensus-contrib-http-util;0.31.1 in central
+	found com.google.http-client#google-http-client-jackson2;1.42.3 in central
+	found com.google.http-client#google-http-client-gson;1.42.3 in central
+	found com.google.api-client#google-api-client;2.1.1 in central
+	found commons-codec#commons-codec;1.15 in local-m2-cache
+	found com.google.oauth-client#google-oauth-client;1.34.1 in central
+	found com.google.http-client#google-http-client-apache-v2;1.42.3 in central
+	found com.google.apis#google-api-services-storage;v1-rev20220705-2.0.0 in central
+	found com.google.code.gson#gson;2.10 in central
+	found com.google.cloud#google-cloud-core;2.9.0 in central
+	found com.google.auto.value#auto-value-annotations;1.10.1 in central
+	found com.google.cloud#google-cloud-core-http;2.9.0 in central
+	found com.google.http-client#google-http-client-appengine;1.42.3 in central
+	found com.google.api#gax-httpjson;0.105.1 in central
+	found com.google.cloud#google-cloud-core-grpc;2.9.0 in central
+	found io.grpc#grpc-core;1.51.0 in central
+	found com.google.api#gax;2.20.1 in central
+	found com.google.api#gax-grpc;2.20.1 in central
+	found io.grpc#grpc-alts;1.51.0 in central
+	found io.grpc#grpc-grpclb;1.51.0 in central
+	found org.conscrypt#conscrypt-openjdk-uber;2.5.2 in central
+	found io.grpc#grpc-protobuf;1.51.0 in central
+	found com.google.auth#google-auth-library-credentials;1.13.0 in central
+	found com.google.auth#google-auth-library-oauth2-http;1.13.0 in central
+	found com.google.api#api-common;2.2.2 in central
+	found javax.annotation#javax.annotation-api;1.3.2 in central
+	found io.opencensus#opencensus-api;0.31.1 in central
+	found io.grpc#grpc-context;1.51.0 in central
+	found com.google.api.grpc#proto-google-iam-v1;1.6.22 in central
+	found com.google.protobuf#protobuf-java;3.21.10 in central
+	found com.google.protobuf#protobuf-java-util;3.21.10 in central
+	found com.google.api.grpc#proto-google-common-protos;2.11.0 in central
+	found org.threeten#threetenbp;1.6.4 in central
+	found com.google.api.grpc#proto-google-cloud-storage-v2;2.16.0-alpha in central
+	found com.google.api.grpc#grpc-google-cloud-storage-v2;2.16.0-alpha in central
+	found com.google.api.grpc#gapic-google-cloud-storage-v2;2.16.0-alpha in central
+	found com.fasterxml.jackson.core#jackson-core;2.14.1 in central
+	found com.google.code.findbugs#jsr305;3.0.2 in central
+	found io.grpc#grpc-api;1.51.0 in central
+	found io.grpc#grpc-auth;1.51.0 in central
+	found io.grpc#grpc-stub;1.51.0 in central
+	found org.checkerframework#checker-qual;3.28.0 in central
+	found com.google.api.grpc#grpc-google-iam-v1;1.6.22 in central
+	found io.grpc#grpc-protobuf-lite;1.51.0 in central
+	found com.google.android#annotations;4.1.1.4 in central
+	found org.codehaus.mojo#animal-sniffer-annotations;1.22 in central
+	found io.grpc#grpc-netty-shaded;1.51.0 in central
+	found io.perfmark#perfmark-api;0.26.0 in central
+	found io.grpc#grpc-googleapis;1.51.0 in central
+	found io.grpc#grpc-xds;1.51.0 in central
+	found io.opencensus#opencensus-proto;0.2.0 in central
+	found io.grpc#grpc-services;1.51.0 in central
+	found com.google.re2j#re2j;1.6 in central
+	found com.navigamez#greex;1.0 in central
+	found dk.brics.automaton#automaton;1.11-8 in central
+	found com.johnsnowlabs.nlp#tensorflow-gpu_2.12;0.4.4 in central
+	found graphframes#graphframes;0.8.1-spark3.0-s_2.12 in spark-packages
+	found org.slf4j#slf4j-api;1.7.16 in central
+:: resolution report :: resolve 461ms :: artifacts dl 11ms
+	:: modules in use:
+	com.amazonaws#aws-java-sdk-bundle;1.11.828 from central in [default]
+	com.fasterxml.jackson.core#jackson-core;2.14.1 from central in [default]
+	com.github.universal-automata#liblevenshtein;3.0.0 from central in [default]
+	com.google.android#annotations;4.1.1.4 from central in [default]
+	com.google.api#api-common;2.2.2 from central in [default]
+	com.google.api#gax;2.20.1 from central in [default]
+	com.google.api#gax-grpc;2.20.1 from central in [default]
+	com.google.api#gax-httpjson;0.105.1 from central in [default]
+	com.google.api-client#google-api-client;2.1.1 from central in [default]
+	com.google.api.grpc#gapic-google-cloud-storage-v2;2.16.0-alpha from central in [default]
+	com.google.api.grpc#grpc-google-cloud-storage-v2;2.16.0-alpha from central in [default]
+	com.google.api.grpc#grpc-google-iam-v1;1.6.22 from central in [default]
+	com.google.api.grpc#proto-google-cloud-storage-v2;2.16.0-alpha from central in [default]
+	com.google.api.grpc#proto-google-common-protos;2.11.0 from central in [default]
+	com.google.api.grpc#proto-google-iam-v1;1.6.22 from central in [default]
+	com.google.apis#google-api-services-storage;v1-rev20220705-2.0.0 from central in [default]
+	com.google.auth#google-auth-library-credentials;1.13.0 from central in [default]
+	com.google.auth#google-auth-library-oauth2-http;1.13.0 from central in [default]
+	com.google.auto.value#auto-value-annotations;1.10.1 from central in [default]
+	com.google.cloud#google-cloud-core;2.9.0 from central in [default]
+	com.google.cloud#google-cloud-core-grpc;2.9.0 from central in [default]
+	com.google.cloud#google-cloud-core-http;2.9.0 from central in [default]
+	com.google.cloud#google-cloud-storage;2.16.0 from central in [default]
+	com.google.code.findbugs#jsr305;3.0.2 from central in [default]
+	com.google.code.gson#gson;2.10 from central in [default]
+	com.google.errorprone#error_prone_annotations;2.16 from central in [default]
+	com.google.guava#failureaccess;1.0.1 from central in [default]
+	com.google.guava#guava;31.1-jre from central in [default]
+	com.google.guava#listenablefuture;9999.0-empty-to-avoid-conflict-with-guava from central in [default]
+	com.google.http-client#google-http-client;1.42.3 from central in [default]
+	com.google.http-client#google-http-client-apache-v2;1.42.3 from central in [default]
+	com.google.http-client#google-http-client-appengine;1.42.3 from central in [default]
+	com.google.http-client#google-http-client-gson;1.42.3 from central in [default]
+	com.google.http-client#google-http-client-jackson2;1.42.3 from central in [default]
+	com.google.j2objc#j2objc-annotations;1.3 from central in [default]
+	com.google.oauth-client#google-oauth-client;1.34.1 from central in [default]
+	com.google.protobuf#protobuf-java;3.21.10 from central in [default]
+	com.google.protobuf#protobuf-java-util;3.21.10 from central in [default]
+	com.google.re2j#re2j;1.6 from central in [default]
+	com.johnsnowlabs.nlp#spark-nlp-gpu_2.12;4.4.1 from central in [default]
+	com.johnsnowlabs.nlp#tensorflow-gpu_2.12;0.4.4 from central in [default]
+	com.navigamez#greex;1.0 from central in [default]
+	com.typesafe#config;1.4.2 from central in [default]
+	commons-codec#commons-codec;1.15 from local-m2-cache in [default]
+	dk.brics.automaton#automaton;1.11-8 from central in [default]
+	graphframes#graphframes;0.8.1-spark3.0-s_2.12 from spark-packages in [default]
+	io.grpc#grpc-alts;1.51.0 from central in [default]
+	io.grpc#grpc-api;1.51.0 from central in [default]
+	io.grpc#grpc-auth;1.51.0 from central in [default]
+	io.grpc#grpc-context;1.51.0 from central in [default]
+	io.grpc#grpc-core;1.51.0 from central in [default]
+	io.grpc#grpc-googleapis;1.51.0 from central in [default]
+	io.grpc#grpc-grpclb;1.51.0 from central in [default]
+	io.grpc#grpc-netty-shaded;1.51.0 from central in [default]
+	io.grpc#grpc-protobuf;1.51.0 from central in [default]
+	io.grpc#grpc-protobuf-lite;1.51.0 from central in [default]
+	io.grpc#grpc-services;1.51.0 from central in [default]
+	io.grpc#grpc-stub;1.51.0 from central in [default]
+	io.grpc#grpc-xds;1.51.0 from central in [default]
+	io.opencensus#opencensus-api;0.31.1 from central in [default]
+	io.opencensus#opencensus-contrib-http-util;0.31.1 from central in [default]
+	io.opencensus#opencensus-proto;0.2.0 from central in [default]
+	io.perfmark#perfmark-api;0.26.0 from central in [default]
+	it.unimi.dsi#fastutil;7.0.12 from central in [default]
+	javax.annotation#javax.annotation-api;1.3.2 from central in [default]
+	org.checkerframework#checker-qual;3.28.0 from central in [default]
+	org.codehaus.mojo#animal-sniffer-annotations;1.22 from central in [default]
+	org.conscrypt#conscrypt-openjdk-uber;2.5.2 from central in [default]
+	org.projectlombok#lombok;1.16.8 from central in [default]
+	org.rocksdb#rocksdbjni;6.29.5 from central in [default]
+	org.slf4j#slf4j-api;1.7.16 from central in [default]
+	org.threeten#threetenbp;1.6.4 from central in [default]
+	:: evicted modules:
+	com.google.protobuf#protobuf-java-util;3.0.0-beta-3 by [com.google.protobuf#protobuf-java-util;3.21.10] in [default]
+	com.google.protobuf#protobuf-java;3.0.0-beta-3 by [com.google.protobuf#protobuf-java;3.21.10] in [default]
+	com.google.code.gson#gson;2.3 by [com.google.code.gson#gson;2.10] in [default]
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   75  |   0   |   0   |   3   ||   72  |   0   |
+	---------------------------------------------------------------------
+:: retrieving :: org.apache.spark#spark-submit-parent-b0639dd7-fdb9-4dba-ad37-2080350837b1
+	confs: [default]
+	0 artifacts copied, 72 already retrieved (0kB/7ms)
+23/06/07 00:43:53 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+2023-06-07 00:44:14.126426: I external/org_tensorflow/tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-06-07 00:44:14.164569: I external/org_tensorflow/tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:939] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-07 00:44:14.245173: I external/org_tensorflow/tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:939] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-07 00:44:14.245295: I external/org_tensorflow/tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:939] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-07 00:44:14.578596: I external/org_tensorflow/tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:939] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-07 00:44:14.578734: I external/org_tensorflow/tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:939] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-07 00:44:14.578808: I external/org_tensorflow/tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:939] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-07 00:44:14.578883: I external/org_tensorflow/tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 20813 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 3090, pci bus id: 0000:01:00.0, compute capability: 8.6
+2023-06-07 00:44:24.018634: I external/org_tensorflow/tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:939] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-07 00:44:24.019333: I external/org_tensorflow/tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:939] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-07 00:44:24.019981: I external/org_tensorflow/tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:939] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-07 00:44:24.020891: I external/org_tensorflow/tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:939] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-07 00:44:24.021061: I external/org_tensorflow/tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:939] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-07 00:44:24.021124: I external/org_tensorflow/tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 20813 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 3090, pci bus id: 0000:01:00.0, compute capability: 8.6
+[Stage 15:>                                                       (0 + 20) / 39][Stage 15:============>                                           (9 + 21) / 39][Stage 15:===============>                                       (11 + 20) / 39]2023-06-07 00:44:32.458212: I external/org_tensorflow/tensorflow/stream_executor/cuda/cuda_blas.cc:1774] TensorFloat-32 will be used for the matrix multiplication. This will only be logged once.
+[Stage 15:======================>                                (16 + 20) / 39][Stage 15:============================>                          (20 + 19) / 39][Stage 15:=============================>                         (21 + 18) / 39][Stage 15:===============================>                       (22 + 17) / 39][Stage 15:================================>                      (23 + 16) / 39][Stage 15:=================================>                     (24 + 15) / 39][Stage 15:===================================>                   (25 + 14) / 39][Stage 15:======================================>                (27 + 12) / 39][Stage 15:=======================================>               (28 + 11) / 39][Stage 15:========================================>              (29 + 10) / 39][Stage 15:===========================================>            (30 + 9) / 39][Stage 15:============================================>           (31 + 8) / 39][Stage 15:===============================================>        (33 + 6) / 39][Stage 15:=====================================================>  (37 + 2) / 39][Stage 15:======================================================> (38 + 1) / 39]                                                                                [Stage 20:=>                                                      (1 + 20) / 39][Stage 20:====>                                                   (3 + 20) / 39][Stage 20:=====>                                                  (4 + 20) / 39][Stage 20:========>                                               (6 + 20) / 39][Stage 20:==========================>                            (19 + 20) / 39][Stage 20:============================>                          (20 + 19) / 39][Stage 20:=============================>                         (21 + 18) / 39][Stage 20:===============================>                       (22 + 17) / 39][Stage 20:================================>                      (23 + 16) / 39][Stage 20:=================================>                     (24 + 15) / 39][Stage 20:===================================>                   (25 + 14) / 39][Stage 20:======================================>                (27 + 12) / 39][Stage 20:=======================================>               (28 + 11) / 39][Stage 20:========================================>              (29 + 10) / 39][Stage 20:===========================================>            (30 + 9) / 39][Stage 20:=============================================>          (32 + 7) / 39][Stage 20:==================================================>     (35 + 4) / 39][Stage 20:=====================================================>  (37 + 2) / 39]                                                                                [Stage 21:============>                                           (9 + 20) / 39][Stage 21:============================>                          (20 + 19) / 39][Stage 21:=============================>                         (21 + 18) / 39][Stage 21:===============================>                       (22 + 17) / 39][Stage 21:================================>                      (23 + 16) / 39][Stage 21:=================================>                     (24 + 15) / 39][Stage 21:===================================>                   (25 + 14) / 39][Stage 21:======================================>                (27 + 12) / 39][Stage 21:=======================================>               (28 + 11) / 39][Stage 21:===========================================>            (30 + 9) / 39][Stage 21:============================================>           (31 + 8) / 39][Stage 21:===============================================>        (33 + 6) / 39][Stage 21:=====================================================>  (37 + 2) / 39][Stage 21:======================================================> (38 + 1) / 39]                                                                                [Stage 23:==========================>                            (19 + 20) / 39][Stage 23:============================>                          (20 + 19) / 39][Stage 23:=============================>                         (21 + 18) / 39][Stage 23:===============================>                       (22 + 17) / 39][Stage 23:================================>                      (23 + 16) / 39][Stage 23:=================================>                     (24 + 15) / 39][Stage 23:===================================>                   (25 + 14) / 39][Stage 23:====================================>                  (26 + 13) / 39][Stage 23:======================================>                (27 + 12) / 39][Stage 23:========================================>              (29 + 10) / 39][Stage 23:============================================>           (31 + 8) / 39][Stage 23:===============================================>        (33 + 6) / 39][Stage 23:==================================================>     (35 + 4) / 39][Stage 23:======================================================> (38 + 1) / 39]                                                                                [Stage 35:=================================>                      (12 + 8) / 20][Stage 35:==========================================>             (15 + 5) / 20][Stage 35:============================================>           (16 + 4) / 20][Stage 35:==================================================>     (18 + 2) / 20][Stage 35:=====================================================>  (19 + 1) / 20]                                                                                [Stage 36:>                                                     (0 + 20) / 1521][Stage 36:>                                                     (1 + 20) / 1521][Stage 36:>                                                     (2 + 20) / 1521][Stage 36:>                                                     (3 + 20) / 1521][Stage 36:>                                                     (7 + 20) / 1521][Stage 36:>                                                     (8 + 20) / 1521][Stage 36:>                                                    (13 + 20) / 1521][Stage 36:>                                                    (18 + 20) / 1521][Stage 36:>                                                    (23 + 20) / 1521][Stage 36:>                                                    (25 + 20) / 1521][Stage 36:>                                                    (27 + 20) / 1521][Stage 36:=>                                                   (31 + 20) / 1521][Stage 36:=>                                                   (34 + 20) / 1521][Stage 36:=>                                                   (38 + 20) / 1521][Stage 36:=>                                                   (42 + 20) / 1521][Stage 36:=>                                                   (45 + 20) / 1521][Stage 36:=>                                                   (47 + 20) / 1521][Stage 36:=>                                                   (52 + 20) / 1521][Stage 36:=>                                                   (53 + 20) / 1521][Stage 36:=>                                                   (54 + 20) / 1521][Stage 36:=>                                                   (55 + 20) / 1521][Stage 36:=>                                                   (57 + 20) / 1521][Stage 36:==>                                                  (58 + 20) / 1521][Stage 36:==>                                                  (62 + 20) / 1521][Stage 36:==>                                                  (65 + 20) / 1521][Stage 36:==>                                                  (69 + 20) / 1521][Stage 36:==>                                                  (71 + 20) / 1521][Stage 36:==>                                                  (76 + 20) / 1521][Stage 36:==>                                                  (79 + 20) / 1521][Stage 36:==>                                                  (86 + 20) / 1521][Stage 36:===>                                                 (90 + 20) / 1521][Stage 36:===>                                                 (91 + 20) / 1521][Stage 36:===>                                                 (94 + 20) / 1521][Stage 36:===>                                                 (99 + 20) / 1521][Stage 36:===>                                                (102 + 20) / 1521][Stage 36:===>                                                (111 + 20) / 1521][Stage 36:===>                                                (113 + 20) / 1521][Stage 36:====>                                               (117 + 20) / 1521][Stage 36:====>                                               (123 + 20) / 1521][Stage 36:====>                                               (128 + 20) / 1521][Stage 36:====>                                               (133 + 20) / 1521][Stage 36:====>                                               (137 + 20) / 1521][Stage 36:====>                                               (143 + 20) / 1521][Stage 36:====>                                               (145 + 20) / 1521][Stage 36:=====>                                              (152 + 20) / 1521][Stage 36:=====>                                              (156 + 20) / 1521][Stage 36:=====>                                              (161 + 20) / 1521][Stage 36:=====>                                              (163 + 21) / 1521][Stage 36:=====>                                              (167 + 20) / 1521][Stage 36:=====>                                              (173 + 20) / 1521][Stage 36:======>                                             (179 + 20) / 1521][Stage 36:======>                                             (181 + 20) / 1521][Stage 36:======>                                             (185 + 20) / 1521][Stage 36:======>                                             (189 + 20) / 1521][Stage 36:======>                                             (195 + 20) / 1521][Stage 36:======>                                             (198 + 20) / 1521][Stage 36:======>                                             (203 + 20) / 1521][Stage 36:=======>                                            (212 + 20) / 1521][Stage 36:=======>                                            (214 + 20) / 1521][Stage 36:=======>                                            (219 + 20) / 1521][Stage 36:=======>                                            (224 + 20) / 1521][Stage 36:=======>                                            (230 + 20) / 1521][Stage 36:=======>                                            (233 + 20) / 1521][Stage 36:========>                                           (237 + 20) / 1521][Stage 36:========>                                           (239 + 20) / 1521][Stage 36:========>                                           (247 + 20) / 1521][Stage 36:========>                                           (254 + 20) / 1521][Stage 36:========>                                           (257 + 20) / 1521][Stage 36:========>                                           (259 + 20) / 1521][Stage 36:=========>                                          (268 + 20) / 1521][Stage 36:=========>                                          (272 + 20) / 1521][Stage 36:=========>                                          (277 + 20) / 1521][Stage 36:=========>                                          (281 + 20) / 1521][Stage 36:=========>                                          (286 + 20) / 1521][Stage 36:=========>                                          (292 + 20) / 1521][Stage 36:==========>                                         (294 + 20) / 1521][Stage 36:==========>                                         (301 + 20) / 1521][Stage 36:==========>                                         (305 + 20) / 1521][Stage 36:==========>                                         (310 + 20) / 1521][Stage 36:==========>                                         (314 + 20) / 1521][Stage 36:==========>                                         (319 + 20) / 1521][Stage 36:==========>                                         (320 + 20) / 1521][Stage 36:===========>                                        (326 + 20) / 1521][Stage 36:===========>                                        (331 + 20) / 1521][Stage 36:===========>                                        (333 + 20) / 1521][Stage 36:===========>                                        (335 + 20) / 1521][Stage 36:===========>                                        (340 + 20) / 1521][Stage 36:===========>                                        (348 + 20) / 1521][Stage 36:============>                                       (351 + 20) / 1521][Stage 36:============>                                       (353 + 20) / 1521][Stage 36:============>                                       (356 + 20) / 1521][Stage 36:============>                                       (366 + 20) / 1521][Stage 36:============>                                       (367 + 20) / 1521][Stage 36:============>                                       (370 + 20) / 1521][Stage 36:============>                                       (374 + 20) / 1521][Stage 36:============>                                       (378 + 21) / 1521][Stage 36:=============>                                      (384 + 20) / 1521][Stage 36:=============>                                      (390 + 20) / 1521][Stage 36:=============>                                      (401 + 20) / 1521][Stage 36:=============>                                      (404 + 20) / 1521][Stage 36:=============>                                      (407 + 20) / 1521][Stage 36:==============>                                     (414 + 20) / 1521][Stage 36:==============>                                     (422 + 20) / 1521][Stage 36:==============>                                     (423 + 20) / 1521][Stage 36:==============>                                     (426 + 20) / 1521][Stage 36:==============>                                     (433 + 20) / 1521][Stage 36:==============>                                     (436 + 20) / 1521][Stage 36:===============>                                    (447 + 20) / 1521][Stage 36:===============>                                    (448 + 20) / 1521][Stage 36:===============>                                    (454 + 20) / 1521][Stage 36:===============>                                    (459 + 20) / 1521][Stage 36:===============>                                    (463 + 20) / 1521][Stage 36:================>                                   (468 + 20) / 1521][Stage 36:================>                                   (470 + 20) / 1521][Stage 36:================>                                   (477 + 20) / 1521][Stage 36:================>                                   (482 + 20) / 1521][Stage 36:================>                                   (487 + 20) / 1521][Stage 36:================>                                   (491 + 20) / 1521][Stage 36:================>                                   (497 + 20) / 1521][Stage 36:=================>                                  (503 + 20) / 1521][Stage 36:=================>                                  (507 + 20) / 1521][Stage 36:=================>                                  (516 + 20) / 1521][Stage 36:=================>                                  (518 + 20) / 1521][Stage 36:=================>                                  (523 + 20) / 1521][Stage 36:==================>                                 (527 + 20) / 1521][Stage 36:==================>                                 (535 + 20) / 1521][Stage 36:==================>                                 (539 + 20) / 1521][Stage 36:==================>                                 (544 + 20) / 1521][Stage 36:==================>                                 (550 + 20) / 1521][Stage 36:==================>                                 (553 + 20) / 1521][Stage 36:===================>                                (556 + 20) / 1521][Stage 36:===================>                                (563 + 20) / 1521][Stage 36:===================>                                (568 + 20) / 1521][Stage 36:===================>                                (570 + 20) / 1521][Stage 36:===================>                                (576 + 20) / 1521][Stage 36:===================>                                (578 + 20) / 1521][Stage 36:====================>                               (585 + 20) / 1521][Stage 36:====================>                               (591 + 20) / 1521][Stage 36:====================>                               (594 + 20) / 1521][Stage 36:====================>                               (601 + 20) / 1521][Stage 36:====================>                               (606 + 20) / 1521][Stage 36:====================>                               (607 + 20) / 1521][Stage 36:====================>                               (613 + 20) / 1521][Stage 36:=====================>                              (624 + 20) / 1521][Stage 36:=====================>                              (626 + 20) / 1521][Stage 36:=====================>                              (631 + 20) / 1521][Stage 36:=====================>                              (632 + 20) / 1521][Stage 36:=====================>                              (639 + 20) / 1521][Stage 36:=====================>                              (643 + 20) / 1521][Stage 36:======================>                             (646 + 20) / 1521][Stage 36:======================>                             (652 + 20) / 1521][Stage 36:======================>                             (658 + 20) / 1521][Stage 36:======================>                             (661 + 20) / 1521][Stage 36:======================>                             (666 + 20) / 1521][Stage 36:======================>                             (669 + 20) / 1521][Stage 36:=======================>                            (673 + 20) / 1521][Stage 36:=======================>                            (676 + 20) / 1521][Stage 36:=======================>                            (683 + 20) / 1521][Stage 36:=======================>                            (684 + 20) / 1521][Stage 36:=======================>                            (689 + 20) / 1521][Stage 36:=======================>                            (694 + 20) / 1521][Stage 36:=======================>                            (698 + 20) / 1521][Stage 36:========================>                           (706 + 20) / 1521][Stage 36:========================>                           (709 + 20) / 1521][Stage 36:========================>                           (712 + 21) / 1521][Stage 36:========================>                           (719 + 20) / 1521][Stage 36:========================>                           (723 + 20) / 1521][Stage 36:========================>                           (729 + 20) / 1521][Stage 36:=========================>                          (733 + 20) / 1521][Stage 36:=========================>                          (735 + 20) / 1521][Stage 36:=========================>                          (736 + 20) / 1521][Stage 36:=========================>                          (749 + 20) / 1521][Stage 36:=========================>                          (753 + 20) / 1521][Stage 36:=========================>                          (757 + 20) / 1521][Stage 36:=========================>                          (760 + 20) / 1521][Stage 36:==========================>                         (768 + 20) / 1521][Stage 36:==========================>                         (769 + 20) / 1521][Stage 36:==========================>                         (772 + 20) / 1521][Stage 36:==========================>                         (778 + 20) / 1521][Stage 36:==========================>                         (781 + 20) / 1521][Stage 36:==========================>                         (787 + 20) / 1521][Stage 36:==========================>                         (789 + 20) / 1521][Stage 36:===========================>                        (796 + 20) / 1521][Stage 36:===========================>                        (799 + 20) / 1521][Stage 36:===========================>                        (800 + 20) / 1521][Stage 36:===========================>                        (801 + 20) / 1521][Stage 36:===========================>                        (802 + 20) / 1521][Stage 36:===========================>                        (803 + 20) / 1521][Stage 36:===========================>                        (804 + 20) / 1521][Stage 36:===========================>                        (805 + 20) / 1521][Stage 36:===========================>                        (806 + 20) / 1521][Stage 36:===========================>                        (808 + 20) / 1521][Stage 36:===========================>                        (809 + 20) / 1521][Stage 36:===========================>                        (810 + 20) / 1521][Stage 36:===========================>                        (811 + 20) / 1521][Stage 36:===========================>                        (813 + 20) / 1521][Stage 36:===========================>                        (814 + 20) / 1521][Stage 36:===========================>                        (815 + 20) / 1521][Stage 36:===========================>                        (816 + 20) / 1521][Stage 36:===========================>                        (817 + 20) / 1521][Stage 36:===========================>                        (818 + 20) / 1521][Stage 36:============================>                       (820 + 20) / 1521][Stage 36:============================>                       (821 + 20) / 1521]ERROR:root:Exception while sending command.
+Traceback (most recent call last):
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/py4j/clientserver.py", line 511, in send_command
+    answer = smart_decode(self.stream.readline()[:-1])
+RuntimeError: reentrant call inside <_io.BufferedReader name=3>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/py4j/java_gateway.py", line 1038, in send_command
+    response = connection.send_command(command)
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/py4j/clientserver.py", line 539, in send_command
+    raise Py4JNetworkError(
+py4j.protocol.Py4JNetworkError: Error while sending or receiving
+ERROR:root:Exception while sending command.
+Traceback (most recent call last):
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/py4j/clientserver.py", line 511, in send_command
+    answer = smart_decode(self.stream.readline()[:-1])
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/socket.py", line 705, in readinto
+    return self._sock.recv_into(b)
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/pyspark/context.py", line 377, in signal_handler
+    self.cancelAllJobs()
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/pyspark/context.py", line 2255, in cancelAllJobs
+    self._jsc.sc().cancelAllJobs()
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/py4j/java_gateway.py", line 1322, in __call__
+    return_value = get_return_value(
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/pyspark/errors/exceptions/captured.py", line 169, in deco
+    return f(*a, **kw)
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/py4j/protocol.py", line 334, in get_return_value
+    raise Py4JError(
+py4j.protocol.Py4JError: An error occurred while calling o27.sc
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/py4j/java_gateway.py", line 1038, in send_command
+    response = connection.send_command(command)
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/py4j/clientserver.py", line 539, in send_command
+    raise Py4JNetworkError(
+py4j.protocol.Py4JNetworkError: Error while sending or receiving
+Traceback (most recent call last):
+  File "/home/andrea/Documents/Computer Science/Big Data Computing/tweepic/run_model.py", line 4, in <module>
+    spark_model.main()
+  File "/home/andrea/Documenti/Computer Science/Big Data Computing/tweepic/src/model/spark_model.py", line 217, in main
+    graph_result.show()
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/pyspark/sql/dataframe.py", line 899, in show
+    print(self._jdf.showString(n, 20, vertical))
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/py4j/java_gateway.py", line 1322, in __call__
+    return_value = get_return_value(
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/pyspark/errors/exceptions/captured.py", line 169, in deco
+    return f(*a, **kw)
+  File "/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/py4j/protocol.py", line 334, in get_return_value
+    raise Py4JError(
+py4j.protocol.Py4JError: An error occurred while calling o730.showString
+23/06/07 00:45:57 ERROR PythonUDFRunner: Python worker exited unexpectedly (crashed)
+java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:83)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage4.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at org.apache.spark.sql.execution.UnsafeExternalRowSorter.sort(UnsafeExternalRowSorter.java:225)
+	at org.apache.spark.sql.execution.exchange.ShuffleExchangeExec$.$anonfun$prepareShuffleDependency$10(ShuffleExchangeExec.scala:369)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2(RDD.scala:888)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2$adapted(RDD.scala:888)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.shuffle.ShuffleWriteProcessor.write(ShuffleWriteProcessor.scala:59)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:101)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:53)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:161)
+	at org.apache.spark.scheduler.Task.run(Task.scala:139)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$3(Executor.scala:554)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1529)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:557)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)
+23/06/07 00:45:57 ERROR PythonUDFRunner: This may have been caused by a prior exception:
+org.apache.spark.SparkException: Python worker exited unexpectedly (crashed)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator$$anonfun$1.applyOrElse(PythonRunner.scala:601)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator$$anonfun$1.applyOrElse(PythonRunner.scala:583)
+	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:38)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:99)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage3.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.ContextAwareIterator.hasNext(ContextAwareIterator.scala:39)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$GroupedIterator.takeDestructively(Iterator.scala:1160)
+	at scala.collection.Iterator$GroupedIterator.go(Iterator.scala:1176)
+	at scala.collection.Iterator$GroupedIterator.fill(Iterator.scala:1213)
+	at scala.collection.Iterator$GroupedIterator.hasNext(Iterator.scala:1217)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator.foreach(Iterator.scala:943)
+	at scala.collection.Iterator.foreach$(Iterator.scala:943)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1431)
+	at org.apache.spark.api.python.PythonRDD$.writeIteratorToStream(PythonRDD.scala:320)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$1.writeIteratorToStream(PythonUDFRunner.scala:57)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.$anonfun$run$1(PythonRunner.scala:440)
+	at org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:2088)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.run(PythonRunner.scala:274)
+Caused by: java.io.EOFException
+	at java.io.DataInputStream.readFully(DataInputStream.java:197)
+	at java.io.DataInputStream.readFully(DataInputStream.java:169)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:86)
+	... 26 more
+23/06/07 00:45:57 ERROR PythonUDFRunner: Python worker exited unexpectedly (crashed)
+java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:83)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage4.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at org.apache.spark.sql.execution.UnsafeExternalRowSorter.sort(UnsafeExternalRowSorter.java:225)
+	at org.apache.spark.sql.execution.exchange.ShuffleExchangeExec$.$anonfun$prepareShuffleDependency$10(ShuffleExchangeExec.scala:369)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2(RDD.scala:888)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2$adapted(RDD.scala:888)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.shuffle.ShuffleWriteProcessor.write(ShuffleWriteProcessor.scala:59)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:101)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:53)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:161)
+	at org.apache.spark.scheduler.Task.run(Task.scala:139)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$3(Executor.scala:554)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1529)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:557)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)
+23/06/07 00:45:57 ERROR PythonUDFRunner: Python worker exited unexpectedly (crashed)
+java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:83)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage4.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at org.apache.spark.sql.execution.UnsafeExternalRowSorter.sort(UnsafeExternalRowSorter.java:225)
+	at org.apache.spark.sql.execution.exchange.ShuffleExchangeExec$.$anonfun$prepareShuffleDependency$10(ShuffleExchangeExec.scala:369)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2(RDD.scala:888)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2$adapted(RDD.scala:888)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.shuffle.ShuffleWriteProcessor.write(ShuffleWriteProcessor.scala:59)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:101)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:53)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:161)
+	at org.apache.spark.scheduler.Task.run(Task.scala:139)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$3(Executor.scala:554)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1529)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:557)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)
+23/06/07 00:45:57 ERROR PythonUDFRunner: Python worker exited unexpectedly (crashed)
+java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:83)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage4.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at org.apache.spark.sql.execution.UnsafeExternalRowSorter.sort(UnsafeExternalRowSorter.java:225)
+	at org.apache.spark.sql.execution.exchange.ShuffleExchangeExec$.$anonfun$prepareShuffleDependency$10(ShuffleExchangeExec.scala:369)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2(RDD.scala:888)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2$adapted(RDD.scala:888)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.shuffle.ShuffleWriteProcessor.write(ShuffleWriteProcessor.scala:59)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:101)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:53)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:161)
+	at org.apache.spark.scheduler.Task.run(Task.scala:139)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$3(Executor.scala:554)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1529)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:557)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)
+23/06/07 00:45:57 ERROR Executor: Exception in task 800.0 in stage 36.0 (TID 1589): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR Executor: Exception in task 812.0 in stage 36.0 (TID 1601): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR PythonUDFRunner: Python worker exited unexpectedly (crashed)
+java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:83)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage4.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at org.apache.spark.sql.execution.UnsafeExternalRowSorter.sort(UnsafeExternalRowSorter.java:225)
+	at org.apache.spark.sql.execution.exchange.ShuffleExchangeExec$.$anonfun$prepareShuffleDependency$10(ShuffleExchangeExec.scala:369)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2(RDD.scala:888)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2$adapted(RDD.scala:888)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.shuffle.ShuffleWriteProcessor.write(ShuffleWriteProcessor.scala:59)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:101)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:53)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:161)
+	at org.apache.spark.scheduler.Task.run(Task.scala:139)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$3(Executor.scala:554)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1529)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:557)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)
+23/06/07 00:45:57 ERROR PythonUDFRunner: Python worker exited unexpectedly (crashed)
+java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:83)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage4.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at org.apache.spark.sql.execution.UnsafeExternalRowSorter.sort(UnsafeExternalRowSorter.java:225)
+	at org.apache.spark.sql.execution.exchange.ShuffleExchangeExec$.$anonfun$prepareShuffleDependency$10(ShuffleExchangeExec.scala:369)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2(RDD.scala:888)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2$adapted(RDD.scala:888)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.shuffle.ShuffleWriteProcessor.write(ShuffleWriteProcessor.scala:59)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:101)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:53)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:161)
+	at org.apache.spark.scheduler.Task.run(Task.scala:139)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$3(Executor.scala:554)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1529)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:557)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)
+23/06/07 00:45:57 ERROR PythonUDFRunner: This may have been caused by a prior exception:
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(SocketInputStream.java:210)
+	at java.net.SocketInputStream.read(SocketInputStream.java:141)
+	at java.io.BufferedInputStream.fill(BufferedInputStream.java:246)
+	at java.io.BufferedInputStream.read1(BufferedInputStream.java:286)
+	at java.io.BufferedInputStream.read(BufferedInputStream.java:345)
+	at java.io.DataInputStream.readFully(DataInputStream.java:195)
+	at java.io.DataInputStream.readFully(DataInputStream.java:169)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:86)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage3.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.ContextAwareIterator.hasNext(ContextAwareIterator.scala:39)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$GroupedIterator.takeDestructively(Iterator.scala:1160)
+	at scala.collection.Iterator$GroupedIterator.go(Iterator.scala:1176)
+	at scala.collection.Iterator$GroupedIterator.fill(Iterator.scala:1213)
+	at scala.collection.Iterator$GroupedIterator.hasNext(Iterator.scala:1217)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator.foreach(Iterator.scala:943)
+	at scala.collection.Iterator.foreach$(Iterator.scala:943)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1431)
+	at org.apache.spark.api.python.PythonRDD$.writeIteratorToStream(PythonRDD.scala:320)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$1.writeIteratorToStream(PythonUDFRunner.scala:57)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.$anonfun$run$1(PythonRunner.scala:440)
+	at org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:2088)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.run(PythonRunner.scala:274)
+23/06/07 00:45:57 ERROR PythonUDFRunner: This may have been caused by a prior exception:
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(SocketInputStream.java:210)
+	at java.net.SocketInputStream.read(SocketInputStream.java:141)
+	at java.io.BufferedInputStream.fill(BufferedInputStream.java:246)
+	at java.io.BufferedInputStream.read1(BufferedInputStream.java:286)
+	at java.io.BufferedInputStream.read(BufferedInputStream.java:345)
+	at java.io.DataInputStream.readFully(DataInputStream.java:195)
+	at java.io.DataInputStream.readFully(DataInputStream.java:169)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:86)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage3.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.ContextAwareIterator.hasNext(ContextAwareIterator.scala:39)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$GroupedIterator.takeDestructively(Iterator.scala:1160)
+	at scala.collection.Iterator$GroupedIterator.go(Iterator.scala:1176)
+	at scala.collection.Iterator$GroupedIterator.fill(Iterator.scala:1213)
+	at scala.collection.Iterator$GroupedIterator.hasNext(Iterator.scala:1217)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator.foreach(Iterator.scala:943)
+	at scala.collection.Iterator.foreach$(Iterator.scala:943)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1431)
+	at org.apache.spark.api.python.PythonRDD$.writeIteratorToStream(PythonRDD.scala:320)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$1.writeIteratorToStream(PythonUDFRunner.scala:57)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.$anonfun$run$1(PythonRunner.scala:440)
+	at org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:2088)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.run(PythonRunner.scala:274)
+23/06/07 00:45:57 ERROR Executor: Exception in task 807.0 in stage 36.0 (TID 1596): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR PythonUDFRunner: This may have been caused by a prior exception:
+org.apache.spark.SparkException: Python worker exited unexpectedly (crashed)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator$$anonfun$1.applyOrElse(PythonRunner.scala:601)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator$$anonfun$1.applyOrElse(PythonRunner.scala:583)
+	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:38)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:99)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage3.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.ContextAwareIterator.hasNext(ContextAwareIterator.scala:39)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$GroupedIterator.takeDestructively(Iterator.scala:1160)
+	at scala.collection.Iterator$GroupedIterator.go(Iterator.scala:1176)
+	at scala.collection.Iterator$GroupedIterator.fill(Iterator.scala:1213)
+	at scala.collection.Iterator$GroupedIterator.hasNext(Iterator.scala:1217)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator.foreach(Iterator.scala:943)
+	at scala.collection.Iterator.foreach$(Iterator.scala:943)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1431)
+	at org.apache.spark.api.python.PythonRDD$.writeIteratorToStream(PythonRDD.scala:320)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$1.writeIteratorToStream(PythonUDFRunner.scala:57)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.$anonfun$run$1(PythonRunner.scala:440)
+	at org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:2088)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.run(PythonRunner.scala:274)
+Caused by: java.io.EOFException
+	at java.io.DataInputStream.readFully(DataInputStream.java:197)
+	at java.io.DataInputStream.readFully(DataInputStream.java:169)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:86)
+	... 26 more
+23/06/07 00:45:57 ERROR PythonUDFRunner: This may have been caused by a prior exception:
+org.apache.spark.SparkException: Python worker exited unexpectedly (crashed)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator$$anonfun$1.applyOrElse(PythonRunner.scala:601)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator$$anonfun$1.applyOrElse(PythonRunner.scala:583)
+	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:38)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:99)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage3.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.ContextAwareIterator.hasNext(ContextAwareIterator.scala:39)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$GroupedIterator.takeDestructively(Iterator.scala:1160)
+	at scala.collection.Iterator$GroupedIterator.go(Iterator.scala:1176)
+	at scala.collection.Iterator$GroupedIterator.fill(Iterator.scala:1213)
+	at scala.collection.Iterator$GroupedIterator.hasNext(Iterator.scala:1217)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator.foreach(Iterator.scala:943)
+	at scala.collection.Iterator.foreach$(Iterator.scala:943)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1431)
+	at org.apache.spark.api.python.PythonRDD$.writeIteratorToStream(PythonRDD.scala:320)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$1.writeIteratorToStream(PythonUDFRunner.scala:57)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.$anonfun$run$1(PythonRunner.scala:440)
+	at org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:2088)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.run(PythonRunner.scala:274)
+Caused by: java.io.EOFException
+	at java.io.DataInputStream.readFully(DataInputStream.java:197)
+	at java.io.DataInputStream.readFully(DataInputStream.java:169)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:86)
+	... 26 more
+23/06/07 00:45:57 ERROR PythonUDFRunner: This may have been caused by a prior exception:
+org.apache.spark.SparkException: Python worker exited unexpectedly (crashed)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator$$anonfun$1.applyOrElse(PythonRunner.scala:601)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator$$anonfun$1.applyOrElse(PythonRunner.scala:583)
+	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:38)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:99)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage3.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.ContextAwareIterator.hasNext(ContextAwareIterator.scala:39)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$GroupedIterator.takeDestructively(Iterator.scala:1160)
+	at scala.collection.Iterator$GroupedIterator.go(Iterator.scala:1176)
+	at scala.collection.Iterator$GroupedIterator.fill(Iterator.scala:1213)
+	at scala.collection.Iterator$GroupedIterator.hasNext(Iterator.scala:1217)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator.foreach(Iterator.scala:943)
+	at scala.collection.Iterator.foreach$(Iterator.scala:943)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1431)
+	at org.apache.spark.api.python.PythonRDD$.writeIteratorToStream(PythonRDD.scala:320)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$1.writeIteratorToStream(PythonUDFRunner.scala:57)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.$anonfun$run$1(PythonRunner.scala:440)
+	at org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:2088)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.run(PythonRunner.scala:274)
+Caused by: java.io.EOFException
+	at java.io.DataInputStream.readFully(DataInputStream.java:197)
+	at java.io.DataInputStream.readFully(DataInputStream.java:169)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:86)
+	... 26 more
+23/06/07 00:45:57 ERROR PythonUDFRunner: Python worker exited unexpectedly (crashed)
+java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:83)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage4.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at org.apache.spark.sql.execution.UnsafeExternalRowSorter.sort(UnsafeExternalRowSorter.java:225)
+	at org.apache.spark.sql.execution.exchange.ShuffleExchangeExec$.$anonfun$prepareShuffleDependency$10(ShuffleExchangeExec.scala:369)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2(RDD.scala:888)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2$adapted(RDD.scala:888)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.shuffle.ShuffleWriteProcessor.write(ShuffleWriteProcessor.scala:59)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:101)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:53)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:161)
+	at org.apache.spark.scheduler.Task.run(Task.scala:139)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$3(Executor.scala:554)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1529)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:557)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)
+23/06/07 00:45:57 ERROR PythonUDFRunner: Python worker exited unexpectedly (crashed)
+java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:83)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage4.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at org.apache.spark.sql.execution.UnsafeExternalRowSorter.sort(UnsafeExternalRowSorter.java:225)
+	at org.apache.spark.sql.execution.exchange.ShuffleExchangeExec$.$anonfun$prepareShuffleDependency$10(ShuffleExchangeExec.scala:369)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2(RDD.scala:888)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2$adapted(RDD.scala:888)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.shuffle.ShuffleWriteProcessor.write(ShuffleWriteProcessor.scala:59)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:101)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:53)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:161)
+	at org.apache.spark.scheduler.Task.run(Task.scala:139)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$3(Executor.scala:554)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1529)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:557)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)
+23/06/07 00:45:57 ERROR PythonUDFRunner: Python worker exited unexpectedly (crashed)
+java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:83)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage4.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at org.apache.spark.sql.execution.UnsafeExternalRowSorter.sort(UnsafeExternalRowSorter.java:225)
+	at org.apache.spark.sql.execution.exchange.ShuffleExchangeExec$.$anonfun$prepareShuffleDependency$10(ShuffleExchangeExec.scala:369)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2(RDD.scala:888)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitionsInternal$2$adapted(RDD.scala:888)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.shuffle.ShuffleWriteProcessor.write(ShuffleWriteProcessor.scala:59)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:101)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:53)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:161)
+	at org.apache.spark.scheduler.Task.run(Task.scala:139)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$3(Executor.scala:554)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1529)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:557)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)
+23/06/07 00:45:57 ERROR PythonUDFRunner: This may have been caused by a prior exception:
+org.apache.spark.SparkException: Python worker exited unexpectedly (crashed)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator$$anonfun$1.applyOrElse(PythonRunner.scala:601)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator$$anonfun$1.applyOrElse(PythonRunner.scala:583)
+	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:38)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:99)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage3.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.ContextAwareIterator.hasNext(ContextAwareIterator.scala:39)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$GroupedIterator.takeDestructively(Iterator.scala:1160)
+	at scala.collection.Iterator$GroupedIterator.go(Iterator.scala:1176)
+	at scala.collection.Iterator$GroupedIterator.fill(Iterator.scala:1213)
+	at scala.collection.Iterator$GroupedIterator.hasNext(Iterator.scala:1217)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator.foreach(Iterator.scala:943)
+	at scala.collection.Iterator.foreach$(Iterator.scala:943)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1431)
+	at org.apache.spark.api.python.PythonRDD$.writeIteratorToStream(PythonRDD.scala:320)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$1.writeIteratorToStream(PythonUDFRunner.scala:57)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.$anonfun$run$1(PythonRunner.scala:440)
+	at org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:2088)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.run(PythonRunner.scala:274)
+Caused by: java.io.EOFException
+	at java.io.DataInputStream.readFully(DataInputStream.java:197)
+	at java.io.DataInputStream.readFully(DataInputStream.java:169)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:86)
+	... 26 more
+23/06/07 00:45:57 ERROR PythonUDFRunner: This may have been caused by a prior exception:
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(SocketInputStream.java:210)
+	at java.net.SocketInputStream.read(SocketInputStream.java:141)
+	at java.io.BufferedInputStream.fill(BufferedInputStream.java:246)
+	at java.io.BufferedInputStream.read1(BufferedInputStream.java:286)
+	at java.io.BufferedInputStream.read(BufferedInputStream.java:345)
+	at java.io.DataInputStream.readFully(DataInputStream.java:195)
+	at java.io.DataInputStream.readFully(DataInputStream.java:169)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:86)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage3.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.ContextAwareIterator.hasNext(ContextAwareIterator.scala:39)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$GroupedIterator.takeDestructively(Iterator.scala:1160)
+	at scala.collection.Iterator$GroupedIterator.go(Iterator.scala:1176)
+	at scala.collection.Iterator$GroupedIterator.fill(Iterator.scala:1213)
+	at scala.collection.Iterator$GroupedIterator.hasNext(Iterator.scala:1217)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator.foreach(Iterator.scala:943)
+	at scala.collection.Iterator.foreach$(Iterator.scala:943)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1431)
+	at org.apache.spark.api.python.PythonRDD$.writeIteratorToStream(PythonRDD.scala:320)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$1.writeIteratorToStream(PythonUDFRunner.scala:57)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.$anonfun$run$1(PythonRunner.scala:440)
+	at org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:2088)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.run(PythonRunner.scala:274)
+23/06/07 00:45:57 ERROR PythonUDFRunner: This may have been caused by a prior exception:
+org.apache.spark.SparkException: Python worker exited unexpectedly (crashed)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator$$anonfun$1.applyOrElse(PythonRunner.scala:601)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator$$anonfun$1.applyOrElse(PythonRunner.scala:583)
+	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:38)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:99)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:75)
+	at org.apache.spark.api.python.BasePythonRunner$ReaderIterator.hasNext(PythonRunner.scala:514)
+	at org.apache.spark.InterruptibleIterator.hasNext(InterruptibleIterator.scala:37)
+	at scala.collection.Iterator$$anon$11.hasNext(Iterator.scala:491)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage3.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anon$1.hasNext(WholeStageCodegenExec.scala:760)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at org.apache.spark.ContextAwareIterator.hasNext(ContextAwareIterator.scala:39)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator$GroupedIterator.fill(Iterator.scala:1211)
+	at scala.collection.Iterator$GroupedIterator.hasNext(Iterator.scala:1217)
+	at scala.collection.Iterator$$anon$10.hasNext(Iterator.scala:460)
+	at scala.collection.Iterator.foreach(Iterator.scala:943)
+	at scala.collection.Iterator.foreach$(Iterator.scala:943)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1431)
+	at org.apache.spark.api.python.PythonRDD$.writeIteratorToStream(PythonRDD.scala:320)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$1.writeIteratorToStream(PythonUDFRunner.scala:57)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.$anonfun$run$1(PythonRunner.scala:440)
+	at org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:2088)
+	at org.apache.spark.api.python.BasePythonRunner$WriterThread.run(PythonRunner.scala:274)
+Caused by: java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at org.apache.spark.sql.execution.python.PythonUDFRunner$$anon$2.read(PythonUDFRunner.scala:83)
+	... 24 more
+23/06/07 00:45:57 ERROR Executor: Exception in task 814.0 in stage 36.0 (TID 1603): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR Executor: Exception in task 839.0 in stage 36.0 (TID 1628): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR Executor: Exception in task 811.0 in stage 36.0 (TID 1600): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR Executor: Exception in task 817.0 in stage 36.0 (TID 1606): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR Executor: Exception in task 815.0 in stage 36.0 (TID 1604): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR Executor: Exception in task 801.0 in stage 36.0 (TID 1590): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR Executor: Exception in task 804.0 in stage 36.0 (TID 1593): Connection reset
+23/06/07 00:45:57 ERROR Executor: Exception in task 808.0 in stage 36.0 (TID 1597): Connection reset
+23/06/07 00:45:57 ERROR Executor: Exception in task 806.0 in stage 36.0 (TID 1595): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR Executor: Exception in task 840.0 in stage 36.0 (TID 1629): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR Executor: Exception in task 810.0 in stage 36.0 (TID 1599): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR Executor: Exception in task 816.0 in stage 36.0 (TID 1605): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR Executor: Exception in task 803.0 in stage 36.0 (TID 1592): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR Executor: Exception in task 805.0 in stage 36.0 (TID 1594): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR Executor: Exception in task 813.0 in stage 36.0 (TID 1602): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR Executor: Exception in task 809.0 in stage 36.0 (TID 1598): Python worker exited unexpectedly (crashed)
+23/06/07 00:45:57 ERROR Executor: Exception in task 802.0 in stage 36.0 (TID 1591): Connection reset

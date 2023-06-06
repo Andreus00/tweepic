@@ -8,11 +8,12 @@ Tweets topic analyzer
 
 ### Urgent:
 - [ ] Cluster the tweets
-- [ ] Use the embeddings of the tweets to find an online cluster
-- [ ] Use the embeddings of the words to crate the edges of the graph
-- [ ] Add time feature to the final embeddings
-- [ ] Embeddings of hashtags as another "Pipeline"
-- [x] Add random forest to the pipeline
+  - [x] Add random forest to the pipeline
+  - [x] Use the embeddings of the tweets to find neighbors
+  - [ ] Use the embeddings of the words to create the edges of the graph
+- [ ] Feeature enhance
+  - [ ] Add time feature to the final embeddings
+  - [ ] Embeddings of hashtags as another "Pipeline"
 
 
 ### Not urgent:
@@ -24,6 +25,7 @@ Tweets topic analyzer
 - [ ] Bias of language
 - [ ] Try Universal Sentence Encoder
 - [ ] Every Operation in the pipeline
+- [ ] Manage memory
 
 
 

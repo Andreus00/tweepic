@@ -1,1 +1,45 @@
 :: loading settings :: url = jar:file:/home/andrea/miniconda3/envs/tweepic/lib/python3.10/site-packages/pyspark/jars/ivy-2.5.1.jar!/org/apache/ivy/core/settings/ivysettings.xml
++--------------------+------------------+----+-----+---+--------------------+--------------------+--------------------+--------------------+
+|               label|                id|year|month|day|                text|            hashtags|            mentions|      text_with_info|
++--------------------+------------------+----+-----+---+--------------------+--------------------+--------------------+--------------------+
+|             chatgpt|              1123|2016|    7| 31|ChatGPT's sophist...|             chatgpt|                    |ChatGPT's sophist...|
+|             chatgpt|              1124|2016|    7| 31|With its comprehe...|                    |                    |With its comprehe...|
+|2016-panamapapers...|              1123|2016|    6| 25|A diabetic food i...|                    |                    |A diabetic food i...|
+|             chatgpt|              1126|2019|    4| 20|L'intelligenza ar...|                    |                    |L'intelligenza ar...|
+|             chatgpt|             12345|2023|   06| 05|L'intelligenza ar...|IA, TecnologiaAva...|                    |L'intelligenza ar...|
+|             chatgpt|             67890|2023|   07| 31|Formula One is ha...|              AI, F1|                    |Formula One is ha...|
+|             chatgpt|             54321|2023|   08| 01|Une brève explica...|  IA, RéseauNeuronal|                    |Une brève explica...|
+|             chatgpt|             09876|2023|   06| 05|Künstliche Intell...|           KI, Ethik|                    |Künstliche Intell...|
+|             chatgpt|             65432|1999|   01| 23|Los bots en Rocke...|  RocketLeague, Bots|                    |Los bots en Rocke...|
+|2015-parisattacks...|666316828294127618|2015|   11| 16|@user: Mourners g...|                    |             nytimes|@user: Mourners g...|
+|2016-brussels-air...|712194335119433728|2016|    3| 22|@user: PHOTO: Rep...|             malbeek|Conflicts, massar...|@user: PHOTO: Rep...|
+|   2012-euro2012.ids|212213006820585473|2012|    6| 11|ONCE MORE UNTO TH...|england, euro2012...|                    |ONCE MORE UNTO TH...|
+|2012-obama-romney...|266145497180430337|2012|   11|  7|Y ganó Obama! #US...|             usa2012|                    |Y ganó Obama! #US...|
+|2012-hurricane-sa...|263372004957249536|2012|   10| 30|@user: Several Br...|                    |     BroomeEmergency|@user: Several Br...|
+|2015-parisattacks...|665407220222435336|2015|   11| 14|@user: When Paris...|                    |         dannahsilva|@user: When Paris...|
+|2016-brussels-air...|712347104564350977|2016|    3| 22|@user: Another tr...|                    |       NiallOfficial|@user: Another tr...|
+|2015-nepalearthqu...|594631262649720832|2015|    5|  2|@user: Aid still ...|                    |                  AP|@user: Aid still ...|
+|2016-hijacked-pla...|714782097861312512|2016|    3| 29|@user: "It's over...|            egyptair|BBCBreaking, Cypr...|@user: "It's over...|
+|2012-hurricane-sa...|262740086129569793|2012|   10| 29|my phones at 29%,...|              myluck|                    |my phones at 29%,...|
+|2016-brussels-air...|712447207098548224|2016|    3| 23|@user: So sad abo...|                    |        Harry_Styles|@user: So sad abo...|
++--------------------+------------------+----+-----+---+--------------------+--------------------+--------------------+--------------------+
+only showing top 20 rows
+
+156
+ld_wiki_tatoeba_cnn_21 download started this may take some time.
+Approximate size to download 7,1 MB
+[ | ]ld_wiki_tatoeba_cnn_21 download started this may take some time.
+Approximate size to download 7,1 MB
+[ / ]Download done! Loading the resource.
+[OK!]
+twitter_xlm_roberta_base download started this may take some time.
+Approximate size to download 993,4 MB
+[ | ]twitter_xlm_roberta_base download started this may take some time.
+Approximate size to download 993,4 MB
+Download done! Loading the resource.
+[ / ][ — ][ \ ][ | ][OK!]
+Column<'sentence_embeddings'>
+Column<'sentence_embeddings'>
+## CALCUATING CARTESIAN PRODUCT ##
+## CALCUATING DISTANCES ##
+## CALCUATING SORTING ##

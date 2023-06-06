@@ -8,7 +8,7 @@ from pyspark.ml.clustering import KMeans
 from pyspark.ml.linalg import Vectors, VectorUDT
 from pyspark.ml.classification import RandomForestClassifier
 from pyspark.ml.feature import BucketedRandomProjectionLSH
-from src.model.cluster import TweetClusterPreprocessing, GraphGenerator, LabelsToIndex, FindHashtags
+from src.model.cluster import *  # TweetClusterPreprocessing, GetTopNNeighbors, LabelsToIndex, FindHashtags, CreateGraph
 
 
 def create_pipeline(label_count, l2c):
@@ -74,12 +74,26 @@ def create_pipeline(label_count, l2c):
     #         df = self.model.transform(dataset)
     #         return self.model.approxSimilarityJoin(df, df, 0.2, distCol="distance")
         
-    graph_processing = GraphGenerator(5, 5,"word_embeddings", "sentence_embeddings", "graph_edges")
+    # graph_processing = GetTopNNeighbors(5, "word_embeddings", "sentence_embeddings", "graph_edges")
+
+
+
+    # createGraph = CreateGraph(5, "word_embeddings", "sentence_embeddings")
+
+    l = [
+        CrossJoin(),
+        CalculateDistance(),
+        FilterDistance(),
+        AggregateNeighbors(),
+        GetClosestNeighbors(n_neighbors=3)
+    ]
+
+
     
     # approxEuclideanDistance = ApproxEuclideanDistance()
     
 
-    return Pipeline(stages=[document_assembler, sentence_detector, tokenizer, embeddingsWord, embeddingsSentence, embeddingsFinisher, graphPreprocessing, kmeans, label2idx, randomForest]), Pipeline(stages=[graph_processing])
+    return Pipeline(stages=[document_assembler, sentence_detector, tokenizer, embeddingsWord, embeddingsSentence, embeddingsFinisher, graphPreprocessing, label2idx, randomForest]), Pipeline(stages=l)
     
 
 
