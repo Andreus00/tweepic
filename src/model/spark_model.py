@@ -26,16 +26,18 @@ from pyspark.ml.feature import BucketedRandomProjectionLSH
 from src.model.cluster import TweetClusterPreprocessing, GetTopNNeighbors, LabelsToIndex
 from src.model import pipeline
 from pyspark.storagelevel import StorageLevel
+from src.utils import *
+
 
 
 def load_data(spark):
     # load dataset
     df = spark.read.parquet("data/parquet_big/tweets.parquet")
     data = [
-    ["chatgpt","1123", "2016", "7", "31", "ChatGPT's sophisticated natural language processing capabilities enable it to generate human-like responses to a wide range of queries.", "chatgpt", ""],
-    ["chatgpt","1124", "2016", "7", "31", "With its comprehensive training on diverse topics, ChatGPT can understand and generate text on a wide range of subjects.", "", ""],
-    ["2016-panamapapers.ids","1123", "2016", "6", "25", "A diabetic food is any pathology that results directly from peripheral arterial disease.", "", ""],
-    ["chatgpt","1126", "2019", "4", "20", "L'intelligenza artificiale è in grado di capire il linguaggio umano e fornire risposte complesse.", "", ""],
+    ["chatgpt","1123", "2016", "7", "31", "#ChatGPT's sophisticated #naturallanguage processing capabilities enable it to generate human-like responses to a wide range of queries.", "chatgpt", ""],
+    ["chatgpt","1124", "2016", "7", "31", "With its comprehensive training on diverse topics, ChatGPT can understand and generate text on a wide range of subjects.", "chatgpt", ""],
+    ["2016-panamapapers.ids","1123", "2016", "6", "25", "A diabetic food is any pathology that results directly from peripheral arterial disease.", "disease", ""],
+    ["chatgpt","1126", "2019", "4", "20", "L'intelligenza artificiale è in grado di capire il linguaggio umano e fornire risposte complesse.", "IntelligenzaArtificiale", ""],
     ["chatgpt", "12345", "2023", "06", "05", "L'intelligenza artificiale sta cambiando il futuro, aprendo nuove opportunità e sfidando i confini dell'innovazione. #IA #TecnologiaAvanzata", "IA, TecnologiaAvanzata",""],
     ["chatgpt", "67890", "2023", "07", "31", "Formula One is harnessing the power of artificial intelligence to enhance performance, optimize strategies, and push boundaries. #AI #F1", "AI, F1",""],
     ["chatgpt", "54321", "2023", "08", "01", "Une brève explication d'un réseau neuronal : un modèle de l'intelligence artificielle inspiré du fonctionnement du cerveau humain, capable d'apprendre et de résoudre des problèmes complexes. #IA #RéseauNeuronal", "IA, RéseauNeuronal",""],
@@ -161,63 +163,86 @@ def text_similarity(texts, sentence_embeddings, labels, q=0):
 
 
 
-
-
 def main():
 
-    FRANCESCO = False # Always True for gay people <3
-
+    FRANCESCO = False # Always True 
+    SAVE_INTERMEDIATE = False
+    LOAD_INTERMEDIATE = True
+    print("FRANCESCO MODE: ", FRANCESCO)
     # create label to index dictionary
     l2c = init_labesl()
     
     # init spark session
-    spark = sparknlp.start(gpu=True, memory="32G", params={"spark.jars.packages": "graphframes:graphframes:0.8.1-spark3.0-s_2.12"})
-
+    spark = sparknlp.start(gpu=True, memory="64G", params={"spark.jars.packages": "graphframes:graphframes:0.8.1-spark3.0-s_2.12",
+                                                           "spakr.driver.memory": "32G",
+                                                           "spark.executor.memory": "32G",
+                                                           "spark.driver.maxResultSize": "32G",
+                                                           "spark.memory.fraction": "0.8"})
     
     from graphframes import GraphFrame
 
     # g = GraphFrame(v, e)
 
     # load data
-    df = load_data(spark)
-    
-    # get label count
-    label_count = len(df.groupBy("label").count().collect())
-
-    # create pipeline
-    if FRANCESCO:
-        nlp_pipeline = pipeline.create_pipeline2(label_count=label_count, l2c=l2c)
+    if LOAD_INTERMEDIATE:
+        result = spark.read.parquet("intermediate_result.parquet")
+        result = result.drop("document", "sentence", "rawPrediction", "probability", "year", "month", "day", "hashtags", "mentions")
+        print(result.columns)
+        print("## LOADED ##")
     else:
-        nlp_pipeline, graph_pipeline = pipeline.create_pipeline(label_count=label_count, l2c=l2c)
+        df = load_data(spark)
+        
+        # get label count
+        label_count = len(df.groupBy("label").count().collect())
 
-    # fit and transform pipeline
+        
+        # create pipeline
+        if FRANCESCO:
+            # for each entry in df add one hashtag
+            df = df.withColumn("hashtags", F.array(F.lit("hashtag")))
+            hashtag_pipeline = pipeline.create_pipeline2(label_count=label_count, l2c=l2c)
+            nlp_pipeline = pipeline.create_embedding_pipeline(label_count=label_count, l2c=l2c)
+        else:
+            nlp_pipeline = pipeline.create_embedding_pipeline(label_count=label_count, l2c=l2c)
 
-    pipeline_model = nlp_pipeline.fit(df)
-    result = pipeline_model.transform(df)
+            # fit and transform pipeline
+            pipeline_model = nlp_pipeline.fit(df)
+            result = pipeline_model.transform(df)
 
-    if not FRANCESCO:
-        graph_input = result.select("id", "sentence_embeddings")
-        result.persist(storageLevel=StorageLevel.DISK_ONLY)
+
+    if SAVE_INTERMEDIATE:
+        result.write.parquet("intermediate_result.parquet")
+        print("## SAVED ##")
+
+
+    if FRANCESCO:
+         hashtag_pipeline_model = hashtag_pipeline.fit(result)
+         hashtag_result = hashtag_pipeline_model.transform(result)
+    else:
+        graph_input = result.select("id", "sentence_embeddings", "word_embeddings", "text", "token", "label")
+        # graph_input.persist(storageLevel=StorageLevel.DISK_ONLY)
+        graph_pipeline = pipeline.create_graph_pipeline()
         graph_pipeline_model = graph_pipeline.fit(graph_input)
         graph_result = graph_pipeline_model.transform(graph_input)
         print("## GRAPH DONE ##")
-        
 
-    
+
     # print stuff
-    result.show()
+    result.show()   
     if FRANCESCO:
-        # print(len(result.select("hashtag_embeddings").collect()[0]))
-        # print(len(result.select("final_embeddings").collect()[0]))
-        # print(result.select("sentence_embeddings").collect()[0])
+        sentence_embeddings = np.asarray(result.select("sentence_embeddings").collect())
+        hashtags_embeddings = np.asarray(hashtag_result.select("hashtags_embeddings").collect())
+        # merge embeddings
+        final_embeddings = np.concatenate((sentence_embeddings, hashtags_embeddings), axis=1)
+        print(final_embeddings.shape)
+        print(final_embeddings)
+        print(result.select("informations").collect()[4])
         print(result.take(1))
     else:
         # for el in (graph_result.select("hashes").collect()[0:3]):
         #     print(el)
         graph_result.show()
-    
-    exit(0)
-    
+        
     sentence_embeddings = np.asarray(result.select("sentence_embeddings").collect())
     # get sentence embeddings
     sentence_embeddings = sentence_embeddings.reshape(sentence_embeddings.shape[0], -1)

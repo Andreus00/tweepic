@@ -10,10 +10,18 @@ Tweets topic analyzer
 - [ ] Cluster the tweets
   - [x] Add random forest to the pipeline
   - [x] Use the embeddings of the tweets to find neighbors
-  - [ ] Use the embeddings of the words to create the edges of the graph
-- [ ] Feeature enhance
+  - [x] Use the embeddings of the words to create the edges of the graph
+  - [ ] Create a GraphFrame
+  - [ ] Use the graph to find the clusters
+- [ ] Feature enhance
   - [ ] Add time feature to the final embeddings
   - [ ] Embeddings of hashtags as another "Pipeline"
+- [ ] Bring it live
+  - [ ] Collect live tweets
+  - [ ] Assign to a cluster
+  - [ ] Create new cluster
+  
+- [ ] 
 
 
 ### Not urgent:
