@@ -4,6 +4,8 @@ from sparknlp.base import *
 from scipy.spatial import distance
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
+import pyspark.sql.functions as F
+
 
 def load_data(spark):
     # load dataset
@@ -11,7 +13,7 @@ def load_data(spark):
     data = [
     ["chatgpt","1123", "2016", "7", "31", "#ChatGPT's sophisticated #naturallanguage processing capabilities enable it to generate human-like responses to a wide range of queries.", "chatgpt", ""],
     ["chatgpt","1124", "2016", "7", "31", "With its comprehensive training on diverse topics, ChatGPT can understand and generate text on a wide range of subjects.", "chatgpt", ""],
-    ["2016-panamapapers.ids","1123", "2016", "6", "25", "A diabetic food is any pathology that results directly from peripheral arterial disease.", "disease", ""],
+    ["2016-panamapapers.ids","1127", "2016", "6", "25", "A diabetic food is any pathology that results directly from peripheral arterial disease.", "disease", ""],
     ["chatgpt","1126", "2019", "4", "20", "L'intelligenza artificiale è in grado di capire il linguaggio umano e fornire risposte complesse.", "IntelligenzaArtificiale", ""],
     ["chatgpt", "12345", "2023", "06", "05", "L'intelligenza artificiale sta cambiando il futuro, aprendo nuove opportunità e sfidando i confini dell'innovazione. #IA #TecnologiaAvanzata", "IA, TecnologiaAvanzata",""],
     ["chatgpt", "67890", "2023", "07", "31", "Formula One is harnessing the power of artificial intelligence to enhance performance, optimize strategies, and push boundaries. #AI #F1", "AI, F1",""],
@@ -29,6 +31,7 @@ def load_data(spark):
     df = df.filter(df["label"] != "")
     df = df.filter(df["month"] != "")
     df = df.filter(df["day"] != "")
+    df = df.withColumn("text", F.regexp_replace("text", r"^RT\s+", ""))
 
     # df = df.withColumn("text_with_info", F.concat_ws(" <sep> ", df["text"], df["year"].cast("string"), df["month"].cast("string"), df["day"].cast("string"), df["hashtags"], df["mentions"]))
     df = df.withColumn("text_with_info", F.concat_ws(" <sep> ", df["text"], df["hashtags"], df["mentions"]))
@@ -42,7 +45,7 @@ def slice_df(df, spark, start, end):
     return spark.createDataFrame(df.limit(end).tail(end - start))
 
 
-def init_labesl():
+def init_labels():
 
     classes = [
         '2014-gazaunderattack.ids',

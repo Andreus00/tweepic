@@ -18,7 +18,7 @@ def create_embedding_pipeline(label_count, l2c):
 
 
     document_assembler = DocumentAssembler() \
-        .setInputCol("text_with_info") \
+        .setInputCol("text") \
         .setOutputCol("document")
     languageDetector = LanguageDetectorDL.pretrained("ld_wiki_tatoeba_cnn_21", "xx")\
         .setInputCols(["document"])\
@@ -32,7 +32,11 @@ def create_embedding_pipeline(label_count, l2c):
     embeddingsWord = XlmRoBertaEmbeddings.pretrained("twitter_xlm_roberta_base", "xx") \
         .setInputCols("document", "token") \
         .setOutputCol("word_embeddings") \
-        .setCaseSensitive(True) 
+        .setCaseSensitive(True)
+    hashtagsEmbeddings = HashtagEmbeddings(
+        inputCols=["token", "word_embeddings"],
+        outputCol="hashtags_embeddings",
+    )
     embeddingsSentence = SentenceEmbeddings() \
         .setInputCols(["document", "word_embeddings"]) \
         .setOutputCol("sentence_embeddings") \
@@ -50,7 +54,7 @@ def create_embedding_pipeline(label_count, l2c):
         .setLabelCol("label_idx") \
         .setFeaturesCol("sentence_embeddings") \
         .setNumTrees(10)
-    graphPreprocessing = TweetClusterPreprocessing(
+    embeddingPreprocessing = TweetEmbeddingPreprocessing(
         inputCol="sentence_embeddings", 
         outputCol="sentence_embeddings")
     # BisectingKMeans()
@@ -61,21 +65,34 @@ def create_embedding_pipeline(label_count, l2c):
         .setPredictionCol("cluster") \
         .setDistanceMeasure("cosine")
     
-    
 
-    return Pipeline(stages=[document_assembler, sentence_detector, tokenizer, embeddingsWord, embeddingsSentence, wordEmbeddingsFinisher, embeddingsFinisher, graphPreprocessing, label2idx, randomForest])
+    return Pipeline(stages=[document_assembler, languageDetector, sentence_detector, tokenizer, embeddingsWord, embeddingsSentence, wordEmbeddingsFinisher, embeddingsFinisher, hashtagsEmbeddings, embeddingPreprocessing, label2idx, randomForest])
 
 
 def create_graph_pipeline():
     l = [
-    GetTopNNeighborsTest(n_neigh=20),
+    GetTopNNeighborsTest(n_neigh=3),
     CalculateWordDistance(),
     ]
     return Pipeline(stages=l)
 
 
+def create_word_distance_pipeline():
+    # l = [
+    # GetTopNNeighborsTest(n_neigh=20),
+    # CalculateWordDistance(),
+    # ]
+    # return Pipeline(stages=l)
+    import datetime
 
+    dateToFeatures = DateToFeatures(["year", "month", "day"], "dateFeature")
+    dateBucketizer = DateBucketizer("dateFeature", "bucket", 12, datetime.date(2023, 6, 8).toordinal())
+    crossJoin = CrossJoin()
+    calculateDistance = CalculateDistance()
+    aggregateNeighbors = AggregateNeighbors()
+    reorderNeighbors = ReorderNeighbors()
 
+    return Pipeline(stages=[dateToFeatures, dateBucketizer, crossJoin, calculateDistance, aggregateNeighbors, reorderNeighbors])
 
 
 
@@ -170,7 +187,7 @@ def create_pipeline2(label_count, l2c):
         .setOutputCols("hashtag_embeddings") \
         .setCleanAnnotations(False)
     
-    get_hashtag_embeddings = TweetClusterPreprocessing(
+    get_hashtag_embeddings = TweetEmbeddingPreprocessing(
         inputCol="hashtag_embeddings", 
         outputCol="hashtag_embeddings")
     
@@ -199,18 +216,3 @@ def create_pipeline2(label_count, l2c):
 
 
     return hashtag_pipeline
-
-
-class WordEmbeddingsFinisher(Transformer):
-
-    def __init__(self, inputCol="word_embeddings", outputCol="word_embeddings_ext") -> None:
-        super().__init__()
-        self.inputCol = inputCol
-        self.outputCol = outputCol
-        self.word_udf = udf(self._udf, ArrayType(ArrayType(FloatType())))
-        
-    def _udf(self, word_embeddings):
-        return [word.embeddings for word in word_embeddings]
-        
-    def _transform(self, df):
-        return df.withColumn(self.outputCol, self.word_udf(self.inputCol))

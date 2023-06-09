@@ -10,11 +10,27 @@ from pyspark.ml.feature import Normalizer
 import pandas as pd
 import pyspark
 from pyspark.sql.window import Window
+import datetime
 
 
 THRESHOLD = 0.1
 
-class TweetClusterPreprocessing(Transformer):
+
+class WordEmbeddingsFinisher(Transformer):
+
+    def __init__(self, inputCol="word_embeddings", outputCol="word_embeddings_ext") -> None:
+        super().__init__()
+        self.inputCol = inputCol
+        self.outputCol = outputCol
+        self.word_udf = udf(self._udf, ArrayType(ArrayType(FloatType())))
+        
+    def _udf(self, word_embeddings):
+        return [word.embeddings for word in word_embeddings]
+        
+    def _transform(self, df):
+        return df.withColumn(self.outputCol, self.word_udf(self.inputCol))
+
+class TweetEmbeddingPreprocessing(Transformer):
 
     def __init__(self, inputCol, outputCol):
         self.inputCol = inputCol
@@ -45,6 +61,52 @@ class LabelsToIndex(Transformer):
     def _transform(self, df):
         return df.withColumn("label_idx", self.udf_func(df.label))
 
+
+class DateToFeatures(Transformer):
+
+    def __init__(self, inputCols, outputCol) -> None:
+        super().__init__()
+        self.inputCols = inputCols
+        self.outputCol = outputCol
+        self.udf_func = udf(self._udf, IntegerType())
+
+    def _udf(self, year, month, day):
+        date_object = datetime.date(year, month, day)
+        # Ottieni l'identificativo univoco come numero ordinale
+        return date_object.toordinal()
+
+    def _transform(self, df):
+        '''
+        takes the input cols which are "year", "month", "day" and returns an integer of the form yyyy*365 + mm*30 + dd
+        '''
+        return df.withColumn(self.outputCol, self.udf_func(*self.inputCols)).drop(*self.inputCols)
+
+
+class DateBucketizer(Transformer):
+    
+        def __init__(self, inputCol, outputCol, buckets, max) -> None:
+            super().__init__()
+            self.inputCol = inputCol
+            self.outputCol = outputCol
+            self.divisor = max // buckets
+            self.udf_func = udf(self._udf, IntegerType())
+    
+        def _udf(self, date):
+            return int(date // self.divisor)
+    
+        def _transform(self, df):
+            return df.withColumn(self.outputCol, self.udf_func(self.inputCol))
+        
+
+class BucketGrouping(Transformer):
+
+    def __init__(self, inputCol = "bucket") -> None:
+        super().__init__()
+        self.inputCol = inputCol
+
+    def _transform(self, df : DataFrame):
+        return df.groupBy(self.inputCol)
+
 class CrossJoin(Transformer):
 
     def __init__(self) -> None:
@@ -53,21 +115,22 @@ class CrossJoin(Transformer):
     def _transform(self, df: DataFrame):
         print("## CALCUATING CARTESIAN PRODUCT ##")
         print("# entries before:", df.count())
+        print(df)
         # make the cartesian product of the dataframe with itself
         # df =  df.join(df.select(F.col("id").alias("id_2"),
-        #                             F.col("sentence_embeddings").alias("sentence_embeddings_2")), "id < id_2", how="inner")
+        #                             F.col("sentence_embeddings").alias("sentence_embeddings_2")), how="inner").filter(F.col("id") != F.col("id_2"))
+        df2 = df.selectExpr("id as id_2", "sentence_embeddings as sentence_embeddings_2", "bucket as bucket_2")
         df = df.join(
-            df.selectExpr("id as id_2", "sentence_embeddings as sentence_embeddings_2"),
-            F.expr("id < id_2"),
+            df2,
             how="inner"
-        )
-        return df
-
+        ).where((F.col("id") != F.col("id_2")) & (F.col("bucket") == F.col("bucket_2")))
+        return df.select("id", "sentence_embeddings", "id_2", "sentence_embeddings_2")
 
 class CalculateDistance(Transformer):
 
-    def __init__(self):
+    def __init__(self, outputCol="euclidean_distance"):
         super().__init__()
+        self.outputCol = outputCol
         self.udf_func = udf(self._udf_func, FloatType())
 
     def _udf_func(self, emb1, emb2):
@@ -75,51 +138,40 @@ class CalculateDistance(Transformer):
 
     def _transform(self, df: DataFrame):
         print("## CALCULATING DISTANCE ##")
-        df =  df.withColumn("euclidean_distance", self.udf_func(F.col("sentence_embeddings"), F.col("sentence_embeddings_2")))
+        df =  df.withColumn(self.outputCol, self.udf_func(F.col("sentence_embeddings"), F.col("sentence_embeddings_2")))
         return df
     
-
-class FilterDistance(Transformer):
-
-    def __init__(self, threshold = THRESHOLD):
-        super().__init__()
-        self.threshold = threshold
-    
-    def _transform(self, df: DataFrame):
-        print("## FILTERING ##")
-        df = df.filter(F.col("euclidean_distance") >= self.threshold)
-        return df
-
-
 class AggregateNeighbors(Transformer):
 
-    def __init__(self, outputCol = "neighbors"):
+    def __init__(self, inputcols = ["euclidean_distance", "id_2"], outputCol = "neighbors"):
+        self.inputCols = inputcols
         self.outputCol = outputCol
-        self.udf_func = udf(self.comparator, IntegerType())
-
-    def comparator(self, a, b):
-        c = a - b
-        return 1 if c > 0 else -1 if c < 0 else 0
-
-
-    # def func(self, a, b):
-    #     return a - b
-
 
     def _transform(self, df: DataFrame):
         print("## AGGREGATING NEIGHBORS ##")
-        df = df.groupBy("id").agg(F.array_sort(F.collect_list(F.struct("euclidean_distance", "id_2")), self.udf_func).alias(self.outputCol))
+        df = df.groupBy("id").agg(F.collect_list(F.struct(*self.inputCols)).alias(self.outputCol))
         return df
 
 
-# class ReorderNeighbors(Transformer):
 
-#     def __init__(self, outputCol = "neighbors"):
-#         self.outputCol = outputCol
+class ReorderNeighbors(Transformer):
 
-#     def _transform(self, df: DataFrame):
-#         print("## REORDERING NEIGHBORS ##")
-#         return df.withColumn(self.outputCol, F.sort_array(F.col("neighbors"), asc = False))
+    def __init__(self, n_neighbors=3, outputCol = "neighbors"):
+        self.outputCol = outputCol
+        self.n_neighbors = n_neighbors
+        self.udf_func = udf(self._udf_func, ArrayType(StructType(
+                                                [
+                                                    StructField("euclidean_distance", FloatType()),
+                                                    StructField("id_2", StringType())
+                                                ]
+                                            )))
+
+    def _udf_func(self, neighbors):
+        return sorted(neighbors, key=lambda x: x[0])[:self.n_neighbors]
+    
+    def _transform(self, df: DataFrame):
+        print("## REORDERING NEIGHBORS ##")
+        return df.withColumn(self.outputCol, self.udf_func(F.col("neighbors")))# F.sort_array(F.col("neighbors"), asc = False))
 
 class GetClosestNeighbors(Transformer):
 
@@ -136,62 +188,79 @@ class GetClosestNeighbors(Transformer):
 
 
 
-class GetTopNNeighbors(Transformer):
-    '''
-    This class gets the embeddings of each tweet and finds the closest n neighbors.
-    It then calculates the weight of each edge based on the distance between the best words of the tweets.
-    '''
+# class GetTopNNeighbors(Transformer):
+#     '''
+#     This class gets the embeddings of each tweet and finds the closest n neighbors.
+#     It then calculates the weight of each edge based on the distance between the best words of the tweets.
+#     '''
 
-    def __init__(self, n_neighbors, wordEmbCol, sentEmbCol, outCol) -> None:
-        super().__init__()
-        self.wordEmbCol = wordEmbCol
-        self.sentEmbCol = sentEmbCol
-        self.outCol = outCol
-        self.n_neighbors = n_neighbors
-        self.udf_func = udf(self._get_top_n_words, ArrayType(FloatType()))
+#     def __init__(self, n_neighbors, wordEmbCol, sentEmbCol, outCol) -> None:
+#         super().__init__()
+#         self.wordEmbCol = wordEmbCol
+#         self.sentEmbCol = sentEmbCol
+#         self.outCol = outCol
+#         self.n_neighbors = n_neighbors
+#         self.udf_func = udf(self._get_top_n_words, ArrayType(FloatType()))
 
 
-    def _get_top_n_words(self, scores):
-        return scores[:self.n_neighbors]
+#     def _get_top_n_words(self, scores):
+#         return scores[:self.n_neighbors]
 
     
-    def _transform(self, df: DataFrame):
-        # for each element, find the n closest neighbors
-        # for each neighbor, calculate the weight of the edge based on the k closest words
-        # return a dataframe with the edges
+#     def _transform(self, df: DataFrame):
+#         # for each element, find the n closest neighbors
+#         # for each neighbor, calculate the weight of the edge based on the k closest words
+#         # return a dataframe with the edges
 
-        print("## CALCUATING CARTESIAN PRODUCT ##")
-        # print("# entries before:", df.count())
-        # make the cartesian product of the dataframe with itself
-        joined = df.crossJoin(df.select(F.col("id").alias("id_2"), 
-                                    F.col("word_embeddings").alias("word_embeddings_2"),
-                                    F.col("sentence_embeddings").alias("sentence_embeddings_2"))) \
-                .filter("id != id_2")
-        # print("# entries after:", joined.count())
+#         print("## CALCUATING CARTESIAN PRODUCT ##")
+#         # print("# entries before:", df.count())
+#         # make the cartesian product of the dataframe with itself
+#         joined = df.crossJoin(df.select(F.col("id").alias("id_2"), 
+#                                     F.col("word_embeddings").alias("word_embeddings_2"),
+#                                     F.col("sentence_embeddings").alias("sentence_embeddings_2"))) \
+#                 .filter("id != id_2")
+#         # print("# entries after:", joined.count())
 
-        print("## CALCUATING DISTANCES ##")
-        # calculate the distances between the embeddings
-        distances = joined.select("id", "id_2", self.wordEmbCol, "word_embeddings_2", self.sentEmbCol, "sentence_embeddings_2") \
-                    .rdd.map(lambda x: (x[0], x[1], x[2], x[3], x[4], x[5], float(distance.cosine(x[4], x[5])))).filter(lambda x: x[6] < THRESHOLD) \
-                        .toDF(["id", "id_2", self.wordEmbCol, "word_embeddings_2", self.sentEmbCol, "sentence_embeddings_2", "distance"])
+#         print("## CALCUATING DISTANCES ##")
+#         # calculate the distances between the embeddings
+#         distances = joined.select("id", "id_2", self.wordEmbCol, "word_embeddings_2", self.sentEmbCol, "sentence_embeddings_2") \
+#                     .rdd.map(lambda x: (x[0], x[1], x[2], x[3], x[4], x[5], float(distance.cosine(x[4], x[5])))).filter(lambda x: x[6] < THRESHOLD) \
+#                         .toDF(["id", "id_2", self.wordEmbCol, "word_embeddings_2", self.sentEmbCol, "sentence_embeddings_2", "distance"])
 
-        # print("# entries after:", distances.count())
+#         # print("# entries after:", distances.count())
 
-        print("## CALCUATING SORTING ##")
-        # get the closest neighbors
-        closest_neighbors = distances.groupBy("id", self.sentEmbCol) \
-                                    .agg(F.collect_list(F.struct("id_2", "word_embeddings_2", "sentence_embeddings_2", "distance")).alias("closest_neighbors")) \
-                                    .repartition(1000) \
-                                    .rdd.map(lambda x: (x[0], x[1], [y[0] for y in sorted(x[2], key=lambda z: z[3])[:self.n_neighbors]])) \
-                                    .toDF(["id", self.sentEmbCol, "closest_neighbors"])
-        # print("# entries after:", closest_neighbors.count())
+#         print("## CALCUATING SORTING ##")
+#         # get the closest neighbors
+#         closest_neighbors = distances.groupBy("id", self.sentEmbCol) \
+#                                     .agg(F.collect_list(F.struct("id_2", "word_embeddings_2", "sentence_embeddings_2", "distance")).alias("closest_neighbors")) \
+#                                     .repartition(1000) \
+#                                     .rdd.map(lambda x: (x[0], x[1], [y[0] for y in sorted(x[2], key=lambda z: z[3])[:self.n_neighbors]])) \
+#                                     .toDF(["id", self.sentEmbCol, "closest_neighbors"])
+#         # print("# entries after:", closest_neighbors.count())
         
-        return closest_neighbors
+#         return closest_neighbors
+
+
+class DivideInBuckets(Transformer):
+        '''
+        Assigns a row to each bucket based on the date
+        '''
     
-
-
-
+        def __init__(self, n_buckets, outputCol = "bucket"):
+            self.outputCol = outputCol
+            self.n_buckets = n_buckets
     
+        def _transform(self, df: DataFrame):
+            print("## DIVIDING IN BUCKETS ##")
+            df = df.withColumn(self.outputCol, F.floor(F.col("date") / self.n_buckets))
+            return df
+
+
+
+
+
+
+
 
 class GetTopNNeighborsTest(Transformer):
 
@@ -293,7 +362,7 @@ class CalculateWordDistance(Transformer):
         # add the word embeddings to the dataframe
         df = df.join(id_and_word_embeddings, df.neighbors == id_and_word_embeddings.n_id, "left").drop("n_id")
         # calculate the distance between the word embeddings 
-        return df.withColumn("word_distance", self.udf_func(F.col("word_embeddings"), F.col("word_embeddings_2")))
+        return df.withColumn("word_distance", self.udf_func(F.col("word_embeddings"), F.col("word_embeddings_2"))).drop("sentence_embeddings", "word_embeddings", "word_embeddings_2")
 
 
 

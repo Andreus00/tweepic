@@ -1,7 +1,7 @@
 import tweepy
 import json
 import datetime
-from src.dataset.tweet_filter import TweetFilter
+# from src.dataset.tweet_filter import TweetFilter
 
 class TweetRetriever:
 
@@ -10,7 +10,7 @@ class TweetRetriever:
             self.conf = json.load(f)
         self.conf["wait_on_rate_limit"] = True
         self.api = tweepy.Client(**self.conf)
-        self.tf = TweetFilter()
+        # self.tf = TweetFilter()
 
     def tweet_to_list(self, tweet):
         return [tweet.id, tweet.created_at.year, tweet.created_at.month, tweet.created_at.day, tweet.text]
@@ -20,8 +20,8 @@ class TweetRetriever:
         tweet = self.api.get_tweet(id=id, tweet_fields=["created_at", "text"]).data
         if tweet == None:
             return None
-        text, hashtags, mentions = self.tf.filter_tweet(tweet.text)
-        return [tweet.id, tweet.created_at.year, tweet.created_at.month, tweet.created_at.day, text, hashtags, mentions]
+        # text, hashtags, mentions = self.tf.filter_tweet(tweet.text)
+        return [tweet.id, tweet.created_at.year, tweet.created_at.month, tweet.created_at.day, tweet.text]
     
     def search(self, query, count=10, toDate=datetime.datetime.now() - datetime.timedelta(seconds=9), tweet_fields=["created_at", "text"]):
         print(toDate)

@@ -12,6 +12,7 @@ import tqdm
 class Id2TweetsConverter:
     def __init__(self, folder_path="data/twitter-events-2012-2016/"):
         self.folder_path = folder_path
+        self.tweets = None
         self.files = os.listdir(self.folder_path)
         self.files.remove("2014-sydneysiege.ids")
         print(len(self.files))
@@ -71,49 +72,46 @@ class Id2TweetsConverter:
         return rdd.collect()
     
     def get_n_tweets(self, n=10):
-        tweets = self.open_all_files()
-        sampled_tweets = self.select_n_tweets(tweets, n=n)
+        if self.tweets is None:
+            self.tweets = self.open_all_files()
+        sampled_tweets = self.select_n_tweets(self.tweets, n=n)
         sampled_tweets = self.id_2_tweet(sampled_tweets)
         return sampled_tweets
-
-
-def remove_RT():
-    spark = SparkSession.builder.getOrCreate()
-
-    old_df = spark.read.parquet("data/parquet_multi_labels/tweets.parquet")
-
-    # remove RT from the beginning of the text
-    old_df = old_df.withColumn("text", regexp_replace("text", "^RT ", ""))
-
-    # save the dataframe
-    old_df.write.parquet("data/parquet_multi_labels_no_RT/tweets.parquet")
-
-    print("Dataframe:")
-    old_df.show()
+    
+    def tweets_fetcher(self, n, batch_size = 300):
+        self.tweets = self.open_all_files()
+        sampled_tweets = self.select_n_tweets(self.tweets, n=n)
+        cur_idx = 0
+        while True:
+            tw = sampled_tweets[cur_idx:cur_idx+batch_size]
+            yield self.id_2_tweet(tw)
 
 
 
 def generate_dataset():
     converter = Id2TweetsConverter()
-    sampled_tweets = converter.get_n_tweets(n=290)
-    df = converter.spark.createDataFrame(sampled_tweets, ["label", "id", "year", "month", "day", "text", "mentions", "hashtags"])
-    df = df.withColumn("text", regexp_replace("text", "^RT ", ""))
+    for i, new_tweets in enumerate(converter.tweets_fetcher(300_000, 300)):
+        current_df_name = f"data/parquet_test{i%2}/"
+        old_df_name = f"data/parquet_test{(i+1)%2}/"
+        df = converter.spark.createDataFrame(new_tweets, ["label", "id", "year", "month", "day", "text"])
+        df = df.withColumn("text", regexp_replace("text", "^RT ", ""))
 
-    # old_df = converter.spark.read.parquet("data/parquet_bkp/tweets.parquet")
-    # df = df.union(old_df)
+        if old_df_name is not None:
+            old_df = converter.spark.read.parquet(old_df_name)
+            df = df.union(old_df)
 
-    # save the dataframe
-    df.write.parquet("data/parquet/tweets.parquet")
+        # save the dataframe overwriting the old one
+        df.write.parquet(current_df_name, mode="overwrite")
 
-    print("Dataframe:")
-    df.show()
+        print("Dataframe:")
+        df.show(truncate=False)
     
 def test():
     converter = Id2TweetsConverter()
     tweets = converter.open_all_files()
     sampled_tweets = converter.select_n_tweets(tweets, n=100)
     sampled_tweets = converter.id_2_tweet(sampled_tweets)
-    df = converter.spark.createDataFrame(sampled_tweets, ["label", "id", "year", "month", "day", "text", "mentions", "hashtags"])
+    df = converter.spark.createDataFrame(sampled_tweets, ["label", "id", "year", "month", "day", "text"])
 
     print("Dataframe:")
     df.show()

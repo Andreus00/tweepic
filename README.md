@@ -62,3 +62,5 @@ Tweets topic analyzer
   - https://link.springer.com/article/10.1007/s12065-021-00696-6
   - https://arxiv.org/pdf/1505.05657v1.pdf
   - https://medium.com/analytics-vidhya/congressional-tweets-using-sentiment-analysis-to-cluster-members-of-congress-in-pyspark-10afa4d1556e
+- Finetune
+  - https://colab.research.google.com/drive/1IAA1h8u53O1hi9807u7oOFuT3728N0-n?usp=sharing#scrollTo=fvM2mCi2yC8c
