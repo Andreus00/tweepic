@@ -92,8 +92,9 @@ class Id2TweetsConverter:
 def generate_dataset():
     converter = Id2TweetsConverter()
     df_name = "data/parqurt_dataset"
-    df = converter.spark.createDataFrame(data=[["2012-obama-romney.ids", "266035659821703169", 2012, 11, 7, "i dont think many people round these parts are particularly content with obama getting re-elected but i mean its just my guess"]],
-                                         schema=["label", "id", "year", "month", "day", "text"])
+    # df = converter.spark.createDataFrame(data=[["2012-obama-romney.ids", "266035659821703169", 2012, 11, 7, "i dont think many people round these parts are particularly content with obama getting re-elected but i mean its just my guess"]],
+    #                                      schema=["label", "id", "year", "month", "day", "text"])
+    df = converter.spark.read.parquet(df_name)
     for i, new_tweets in enumerate(converter.tweets_fetcher(100_000, 300)):
         df_new = converter.spark.createDataFrame(new_tweets, ["label", "id", "year", "month", "day", "text"])
         df_new = df_new.withColumn("text", regexp_replace("text", "^RT ", ""))

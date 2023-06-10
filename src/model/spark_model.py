@@ -94,41 +94,26 @@ def main():
         
 
     sentence_proximity_pipeline = graph_pipeline.create_sentence_proximity_pipeline()
-    sentence_proximity_input = result.select("id", "sentence_embeddings", "word_embeddings", "hashtags_embeddings", "time_bucket")
+    sentence_proximity_input = result.select("id", "text",  "sentence_embeddings", "word_embeddings", "hashtags_embeddings", "time_bucket")
     sentence_proximity_input.cache()
     result.unpersist(blocking=True)
     sentence_proximity_pipeline_model = sentence_proximity_pipeline.fit(sentence_proximity_input)
     sentence_proximity_pipeline_result = sentence_proximity_pipeline_model.transform(sentence_proximity_input)
-    sentence_proximity_pipeline_result.show()
     
+
     ### pipeline 2
-        
-    
-
-
-    # graph_input = result.select("id", "sentence_embeddings", "word_embeddings")
-    # graph_input.cache()
-    # result.unpersist(blocking=True)
-    # graph_pipeline = pipeline.create_graph_pipeline()
-    # graph_pipeline_model = graph_pipeline.fit(graph_input)
-    # graph_result = graph_pipeline_model.transform(graph_input)
-
-
-    # todo: fix this
-    # word_distance_pipeline = pipeline.create_word_distance_pipeline()
-    # word_distance_input = result.select("id", "sentence_embeddings", F.col("year").cast("int"),  F.col("month").cast("int"),  F.col("day").cast("int"))
-    # word_distance_input.cache()
-    # result.persist(storageLevel=StorageLevel.DISK_ONLY)
-    # word_distance_pipeline_model = word_distance_pipeline.fit(word_distance_input)
-    # word_distance_pipeline_result = word_distance_pipeline_model.transform(word_distance_input)
-    # word_distance_pipeline_result.show(truncate=False)
-
+    word_and_hashtag_proximity_pipeline = graph_pipeline.create_word_and_hashtag_proximity_pipeline()
+    word_and_hashtag_proximity_input = sentence_proximity_pipeline_result.select("id", "text", "word_embeddings", "hashtags_embeddings", "neighbors")
+    word_and_hashtag_proximity_pipeline_model = word_and_hashtag_proximity_pipeline.fit(word_and_hashtag_proximity_input)
+    word_and_hashtag_proximity_pipeline_result = word_and_hashtag_proximity_pipeline_model.transform(word_and_hashtag_proximity_input)
+    word_and_hashtag_proximity_pipeline_result.show()
+    print(result.filter(result.id == 42949672964).collect()[0])        # QUERY
+    # print(result.filter(result.id == 274877906949).collect()[0].text)        # FIRST
+    # print(result.filter(result.id == 154618822660).collect()[0].text)        # FIRST
+    # print(result.filter(result.id == 8589934598).collect()[0].text)        # FIRST
     # print("## GRAPH DONE ##")
-
-
     # print stuff
     # graph_result.show(truncate=False)
-        
     sentence_embeddings = np.asarray(result.select("sentence_embeddings").collect())
     # get sentence embeddings
     sentence_embeddings = sentence_embeddings.reshape(sentence_embeddings.shape[0], -1)

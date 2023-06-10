@@ -22,26 +22,20 @@ def create_graph_pipeline():
 
 
 def create_sentence_proximity_pipeline():
-    # l = [
-    # GetTopNNeighborsTest(n_neigh=20),
-    # CalculateWordDistance(),
-    # ]
-    # return Pipeline(stages=l)s
     cross_join = CrossJoin()
     calculate_distance = CalculateDistance()
     aggregate_neighbors = AggregateNeighbors()
-    reorder_neighbors = ReorderNeighbors()
+    reorder_neighbors = ReorderNeighbors(n_neighbors=20)
 
     return Pipeline(stages=[cross_join, calculate_distance, aggregate_neighbors, reorder_neighbors])
 
-def create_word_proximity_pipeline(inputCol, outputCol):
+def create_word_and_hashtag_proximity_pipeline():
 
-    explode_column = ExplodeColumn()
+    explode_column = ExplodeColumn(inpCol="neighbors")
+    closest_words = CalculateArrayDistance(inpCols=["word_embeddings", "neighbors.word_embeddings_2"], outCol="closest_words")
+    closest_hashtags = CalculateArrayDistance(inpCols=["hashtags_embeddings", "neighbors.hashtags_embeddings_2"], outCol="closest_hashtags", outFields=["distance", "hashtag_couples", "hashtag_1", "hashtag_2"])
     
-    
-
-
-    return Pipeline(stages=[])
+    return Pipeline(stages=[explode_column, closest_words, closest_hashtags])
 
 
 
@@ -53,20 +47,20 @@ class CrossJoin(Transformer):
     def _transform(self, df: DataFrame):
         print("## CROSS JOIN ##")
 
-        df2 = df.alias("df2").selectExpr("id as id_2", "sentence_embeddings as sentence_embeddings_2", "word_embeddings as word_embeddings_2", "hashtags_embeddings as hashtags_embeddings_2", "time_bucket")
+        df2 = df.alias("df2").selectExpr("id as id_2", "text as text_2", "sentence_embeddings as sentence_embeddings_2", "word_embeddings as word_embeddings_2", "hashtags_embeddings as hashtags_embeddings_2", "time_bucket")
         df = df.join(df2, (df["time_bucket"] == df2["time_bucket"]) & (df["id"] != df2["id_2"]), how="inner")
         
-        return df.select("id", "sentence_embeddings", "word_embeddings", "hashtags_embeddings", "id_2", "sentence_embeddings_2", "word_embeddings_2", "hashtags_embeddings_2")
+        return df.select("id", "text", "sentence_embeddings", "word_embeddings", "hashtags_embeddings", "id_2", "text_2", "sentence_embeddings_2", "word_embeddings_2", "hashtags_embeddings_2")
 
 class CalculateDistance(Transformer):
 
-    def __init__(self, outputCol="euclidean_distance"):
+    def __init__(self, outputCol="cosine_distance"):
         super().__init__()
         self.outputCol = outputCol
         self.udf_func = udf(self._udf_func, FloatType())
 
     def _udf_func(self, emb1, emb2):
-        return float(distance.euclidean(emb1, emb2))
+        return float(distance.cosine(emb1, emb2))
 
     def _transform(self, df: DataFrame):
         print("## CALCULATING DISTANCE ##")
@@ -75,13 +69,13 @@ class CalculateDistance(Transformer):
     
 class AggregateNeighbors(Transformer):
 
-    def __init__(self, inputcols = ["euclidean_distance", "id_2", "word_embeddings_2", "hashtags_embeddings_2"], outputCol = "neighbors"):
+    def __init__(self, inputcols = ["cosine_distance", "id_2", "text_2", "word_embeddings_2", "hashtags_embeddings_2"], outputCol = "neighbors"):
         self.inputCols = inputcols
         self.outputCol = outputCol
 
     def _transform(self, df: DataFrame):
         print("## AGGREGATING NEIGHBORS ##")
-        df = df.groupBy("id", "word_embeddings", "hashtags_embeddings").agg(F.collect_list(F.struct(*self.inputCols)).alias(self.outputCol))
+        df = df.groupBy("id", "word_embeddings", "hashtags_embeddings", "text").agg(F.collect_list(F.struct(*self.inputCols)).alias(self.outputCol))
         return df
 # check if there are duplicates in the neighbors
 # df.select("id", F.size("neighbors").alias("size")).groupBy("size").count().show()
@@ -93,8 +87,9 @@ class ReorderNeighbors(Transformer):
         self.n_neighbors = n_neighbors
         self.udf_func = udf(self._udf_func, ArrayType(StructType(
                                                 [
-                                                    StructField("euclidean_distance", FloatType()),
-                                                    StructField("id_2", StringType()),
+                                                    StructField("cosine_distance", FloatType()),
+                                                    StructField("id_2", IntegerType()),
+                                                    StructField("text_2", StringType()),
                                                     StructField("word_embeddings_2", ArrayType(ArrayType(FloatType()))),
                                                     StructField("hashtags_embeddings_2", ArrayType(ArrayType(FloatType())))
                                                 ]
@@ -102,12 +97,12 @@ class ReorderNeighbors(Transformer):
 
     def _udf_func(self, neighbors):
         # best_neighbors = []
-        neigh_len = len(neighbors)
-        if neigh_len <= self.n_neighbors:
-            return neighbors
-        scores = np.array([n[0] for n in neighbors])
-        # return sorted(neighbors, key=lambda x: x[0])[:self.n_neighbors]< 
-        idxs = np.argpartition(scores, self.n_neighbors)[:self.n_neighbors]
+        return sorted(neighbors, key=lambda x: x[0])[:self.n_neighbors]
+        # neigh_len = len(neighbors)
+        # if neigh_len <= self.n_neighbors:
+        #     return neighbors
+        # scores = np.array([n[0] for n in neighbors])
+        # idxs = np.argpartition(scores, self.n_neighbors)[:self.n_neighbors]
         return [neighbors[i] for i in idxs]
 
     
@@ -120,49 +115,60 @@ class ReorderNeighbors(Transformer):
 ################## CALCULATE DISTANCE BETWEEN WORDS/HASHTAGS #####################
 
 
-class CalculateWordDistance(Transformer):
+class ExplodeColumn(Transformer):
 
-    def __init__(self, k_words=3):
+    def __init__(self, inpCol="neighbors") -> None:
         super().__init__()
-        self.k_words = k_words
-        self.udf_func = udf(self._calculate_word_distance, StructType([
-                                                                StructField("distance", FloatType(), True), 
-                                                                StructField("word_couples", ArrayType(
+        self.inputCol = inpCol
+
+    def _transform(self, df: DataFrame):
+        print("## EXPLODING COLUMN ##")
+        return df.withColumn(self.inputCol, F.explode(self.inputCol))
+
+
+class CalculateArrayDistance(Transformer):
+
+    def __init__(self,inpCols, outCol, outFields=["distance", "word_couples", "word_1", "word_2"], k_el=3):
+        super().__init__()
+        self.inputCols = inpCols
+        self.outFields = outFields
+        self.outCol = outCol
+        self.k_el = k_el
+        self.udf_func = udf(self._calculate_array_distance, StructType([
+                                                                StructField(self.outFields[0], FloatType(), True), 
+                                                                StructField(self.outFields[1], ArrayType(
                                                                                                 StructType([
-                                                                                                        StructField("word_1", IntegerType(), True),
-                                                                                                        StructField("word_2", IntegerType(), True)
+                                                                                                        StructField(self.outFields[2], IntegerType(), True),
+                                                                                                        StructField(self.outFields[3], IntegerType(), True)
                                                                                                 ]), True
-                                                                                            ))
+                                                                                            ), True)
                                                             ]))
 
-    def _calculate_word_distance(self, word_emb_1, word_emb_2):
+    def _calculate_array_distance(self, array_emb_1, array_el_2):
         # wordemb1 and wordemb2 are two lists of word embeddings
         # for each word in the first embedding, find the closest word in the second embedding
         # then take the best three and average the distances
-
+        len_1, len_2 = len(array_emb_1), len(array_el_2)
+        if len_1 == 0 or len_2 == 0:
+            return None
         # calculate the distances between the embeddings
-        distances = distance.cdist(word_emb_1, word_emb_2, metric="cosine")
+        distances = distance.cdist(array_emb_1, array_el_2, metric="cosine")
+        k_el  = min(len_1 * len_2, self.k_el)
 
         # get the closest neighbors
-        closest_words_idxs = np.argsort(distances, axis=None)[:self.k_words]
+        closest_el_idxs = np.argsort(distances, axis=None)[:k_el]
 
-        words_sent_1, words_sent_2 = np.unravel_index(closest_words_idxs, distances.shape)
+        array_el_1, array_el_2 = np.unravel_index(closest_el_idxs, distances.shape)
 
 
         # get the distances of the closest neighbors
-        distances = distances[words_sent_1, words_sent_2]
+        distances = distances[array_el_1, array_el_2]
 
         # return the average of the distances
-        return float(np.mean(distances.flatten())), [(int(a),int(b)) for a, b in zip(words_sent_1, words_sent_2)]
+        return float(np.mean(distances.flatten())), [(int(a),int(b)) for a, b in zip(array_el_1, array_el_2)]
     
     
     def _transform(self, df: DataFrame):
-        print("## CALCULATING WORD DISTANCES ##")
-        # find the word embeddings for the neighbors
-        id_and_word_embeddings = df.select(F.col("id").alias("n_id"), F.col("word_embeddings").alias("word_embeddings_2"))
-        # explode the list of neighbors
-        df = df.withColumn("neighbors", F.explode(F.col("neighbors")))
-        # add the word embeddings to the dataframe
-        df = df.join(id_and_word_embeddings, df.neighbors == id_and_word_embeddings.n_id, "left").drop("n_id")
+        print("## CALCULATING DISTANCES ##")
         # calculate the distance between the word embeddings 
-        return df.withColumn("word_distance", self.udf_func(F.col("word_embeddings"), F.col("word_embeddings_2"))).drop("sentence_embeddings", "word_embeddings", "word_embeddings_2")
+        return df.withColumn(self.outCol, self.udf_func(F.col(self.inputCols[0]), F.col(self.inputCols[1]))).drop(*self.inputCols)
