@@ -16,174 +16,24 @@ import datetime
 THRESHOLD = 0.1
 
 
-class WordEmbeddingsFinisher(Transformer):
-
-    def __init__(self, inputCol="word_embeddings", outputCol="word_embeddings_ext") -> None:
-        super().__init__()
-        self.inputCol = inputCol
-        self.outputCol = outputCol
-        self.word_udf = udf(self._udf, ArrayType(ArrayType(FloatType())))
-        
-    def _udf(self, word_embeddings):
-        return [word.embeddings for word in word_embeddings]
-        
-    def _transform(self, df):
-        return df.withColumn(self.outputCol, self.word_udf(self.inputCol))
-
-class TweetEmbeddingPreprocessing(Transformer):
-
-    def __init__(self, inputCol, outputCol):
-        self.inputCol = inputCol
-        self.outputCol = outputCol
-        self.udf_func = udf(self._udf, VectorUDT())
-
-    # def _udf(self, *cols):
-    #     # Concatenate the vectors
-    #     return Vectors.dense(*(c[0] for c in cols))
-
-    # def _transform(self, df):
-    #     return df.withColumn(self.outputCol, self.udf_func(*self.inputCols))
-    def _udf(self, emb):
-        return Vectors.dense(*emb[0])
-
-    def _transform(self, df):
-        # df.drop("document", "sentence", "token", "rawPrediction", "probability", "year", "month", "day", "hashtags", "mentions")
-        return df.withColumn(self.outputCol, self.udf_func(self.inputCol))
-
-
-class LabelsToIndex(Transformer):
-
-    def __init__(self, l2c) -> None:
-        super().__init__()
-        self.l2c = l2c
-        self.udf_func = udf(lambda x: l2c[x], IntegerType())
-    
-    def _transform(self, df):
-        return df.withColumn("label_idx", self.udf_func(df.label))
-
-
-class DateToFeatures(Transformer):
-
-    def __init__(self, inputCols, outputCol) -> None:
-        super().__init__()
-        self.inputCols = inputCols
-        self.outputCol = outputCol
-        self.udf_func = udf(self._udf, IntegerType())
-
-    def _udf(self, year, month, day):
-        date_object = datetime.date(year, month, day)
-        # Ottieni l'identificativo univoco come numero ordinale
-        return date_object.toordinal()
-
-    def _transform(self, df):
-        '''
-        takes the input cols which are "year", "month", "day" and returns an integer of the form yyyy*365 + mm*30 + dd
-        '''
-        return df.withColumn(self.outputCol, self.udf_func(*self.inputCols)).drop(*self.inputCols)
-
-
-class DateBucketizer(Transformer):
-    
-        def __init__(self, inputCol, outputCol, buckets, max) -> None:
-            super().__init__()
-            self.inputCol = inputCol
-            self.outputCol = outputCol
-            self.divisor = max // buckets
-            self.udf_func = udf(self._udf, IntegerType())
-    
-        def _udf(self, date):
-            return int(date // self.divisor)
-    
-        def _transform(self, df):
-            return df.withColumn(self.outputCol, self.udf_func(self.inputCol))
         
 
-class BucketGrouping(Transformer):
+# class CrossJoin(Transformer):
 
-    def __init__(self, inputCol = "bucket") -> None:
-        super().__init__()
-        self.inputCol = inputCol
+#     def __init__(self) -> None:
+#         super().__init__()
 
-    def _transform(self, df : DataFrame):
-        return df.groupBy(self.inputCol)
+#     def _transform(self, df: DataFrame):
+#         print("## CROSS JOIN ##")
 
-class CrossJoin(Transformer):
-
-    def __init__(self) -> None:
-        super().__init__()
-
-    def _transform(self, df: DataFrame):
-        print("## CALCUATING CARTESIAN PRODUCT ##")
-        print("# entries before:", df.count())
-        print(df)
-        # make the cartesian product of the dataframe with itself
-        # df =  df.join(df.select(F.col("id").alias("id_2"),
-        #                             F.col("sentence_embeddings").alias("sentence_embeddings_2")), how="inner").filter(F.col("id") != F.col("id_2"))
-        df2 = df.selectExpr("id as id_2", "sentence_embeddings as sentence_embeddings_2", "bucket as bucket_2")
-        df = df.join(
-            df2,
-            how="inner"
-        ).where((F.col("id") != F.col("id_2")) & (F.col("bucket") == F.col("bucket_2")))
-        return df.select("id", "sentence_embeddings", "id_2", "sentence_embeddings_2")
-
-class CalculateDistance(Transformer):
-
-    def __init__(self, outputCol="euclidean_distance"):
-        super().__init__()
-        self.outputCol = outputCol
-        self.udf_func = udf(self._udf_func, FloatType())
-
-    def _udf_func(self, emb1, emb2):
-        return float(distance.euclidean(emb1, emb2))
-
-    def _transform(self, df: DataFrame):
-        print("## CALCULATING DISTANCE ##")
-        df =  df.withColumn(self.outputCol, self.udf_func(F.col("sentence_embeddings"), F.col("sentence_embeddings_2")))
-        return df
-    
-class AggregateNeighbors(Transformer):
-
-    def __init__(self, inputcols = ["euclidean_distance", "id_2"], outputCol = "neighbors"):
-        self.inputCols = inputcols
-        self.outputCol = outputCol
-
-    def _transform(self, df: DataFrame):
-        print("## AGGREGATING NEIGHBORS ##")
-        df = df.groupBy("id").agg(F.collect_list(F.struct(*self.inputCols)).alias(self.outputCol))
-        return df
-
-
-
-class ReorderNeighbors(Transformer):
-
-    def __init__(self, n_neighbors=3, outputCol = "neighbors"):
-        self.outputCol = outputCol
-        self.n_neighbors = n_neighbors
-        self.udf_func = udf(self._udf_func, ArrayType(StructType(
-                                                [
-                                                    StructField("euclidean_distance", FloatType()),
-                                                    StructField("id_2", StringType())
-                                                ]
-                                            )))
-
-    def _udf_func(self, neighbors):
-        return sorted(neighbors, key=lambda x: x[0])[:self.n_neighbors]
-    
-    def _transform(self, df: DataFrame):
-        print("## REORDERING NEIGHBORS ##")
-        return df.withColumn(self.outputCol, self.udf_func(F.col("neighbors")))# F.sort_array(F.col("neighbors"), asc = False))
-
-class GetClosestNeighbors(Transformer):
-
-    def __init__(self, n_neighbors=3, outputCol = "neighbors"):
-        self.outputCol = outputCol
-        self.n_neighbors = n_neighbors
-
-    def _transform(self, df: DataFrame):
-        print("## GETTING CLOSEST NEIGHBORS ##")
-        df =  df.withColumn(self.outputCol, F.slice(F.col("neighbors"), 1, self.n_neighbors))
-        return df
-    
+#         window = Window.partitionBy("bucket")
+        
+#         df2 = df.selectExpr("id as id_2", "sentence_embeddings as sentence_embeddings_2", "bucket as bucket_2")
+#         df = df.join(
+#             df2,
+#             how="inner"
+#         ).where((F.col("id").over(window) != F.col("id_2").over(window)))
+#         return df.select("id", "sentence_embeddings", "id_2", "sentence_embeddings_2")
 
 
 

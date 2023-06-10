@@ -17,7 +17,7 @@ import re
 
 
 
-def create_final_pipeline():
+def create_embeddings_pipeline():
     http_filter = HttpCleaner(inputCol="text", outputCol="text")
     document_assembler = DocumentAssembler() \
         .setInputCol("text") \
@@ -75,14 +75,22 @@ def create_final_pipeline():
     hashtags_embeddings = ElementSelector(
         inputCols=["word_embeddings", "hashtag_idxs"],
         outputCol="hashtags_embeddings",
-        attribute="embeddings"
+        attribute="embeddings",
+        elementType=ArrayType(FloatType())
     )
-
+    # DATE
+    date_embeddings = DateEmbedding(
+        inputCols=["year", "month", "day"],
+        outputCol="date_embeddings"
+    )
+    date_bucketizer = DateBucketizer("date_embeddings", "time_bucket", 60, datetime.date(2012, 1, 1).toordinal(), datetime.date(2017, 1, 1).toordinal())
+    
     # PUNCTUATION REMOVER
     embeddings_punctuation_remover = ElementRemover(
         inputCols=["word_embeddings", "punctuation_idxs"],
         outputCol="word_embeddings",
-        idxs="punctuation_idxs"
+        idxs="punctuation_idxs",
+        elementType=ArrayType(FloatType())
     )
     
     
@@ -101,6 +109,8 @@ def create_final_pipeline():
         embeddings_finisher,
         embeddings_final_form,
         hashtags_embeddings,
+        date_embeddings,
+        date_bucketizer,
         embeddings_punctuation_remover
     ])
 
@@ -162,17 +172,16 @@ class CustomRegexReplacer(Transformer):
 
 class ElementSelector(Transformer):
 
-    def __init__(self, inputCols, outputCol, attribute="resut") -> None:
+    def __init__(self, inputCols, outputCol, attribute="resut", elementType=StringType()) -> None:
         '''
         Gets two columns and returns a new column with the elements of the
-        first column at the indexes specified in the second column modified
-        by the function specified in the input
+        first column at the indexes specified in the second column taken.
         '''
         super().__init__()
         self.inputCols = inputCols
         self.outputCol = outputCol
         self.attribute = attribute
-        self.udf_f = udf(self.get_match_idxs, ArrayType(StringType()))
+        self.udf_f = udf(self.get_match_idxs, ArrayType(elementType))
 
     def get_match_idxs(self, tokens, idxs, attribute):
         return [getattr(tokens[idx], attribute) for idx in range(len(tokens)) if idx in idxs]
@@ -184,17 +193,16 @@ class ElementSelector(Transformer):
 
 class ElementRemover(Transformer):
 
-    def __init__(self, inputCols, outputCol, idxs) -> None:
+    def __init__(self, inputCols, outputCol, idxs, elementType=StringType()) -> None:
         '''
         Gets two columns and returns a new column with the elements of the 
-        first column at the indexes specified in the second column modified 
-        by the function specified in the input
+        first column at the indexes specified in the second column removed
         '''
         super().__init__()
         self.inputCols = inputCols
         self.outputCol = outputCol
         self.idxs = idxs
-        self.udf_f = udf(self.get_match_idxs, ArrayType(StringType()))
+        self.udf_f = udf(self.get_match_idxs, ArrayType(elementType))
 
     def get_match_idxs(self, tokens, idxs):
         return [tokens[idx].embeddings for idx in range(len(tokens)) if idx not in idxs]
@@ -203,4 +211,83 @@ class ElementRemover(Transformer):
         dataset = dataset.withColumn(self.outputCol, self.udf_f(F.col(self.inputCols[0]), F.col(self.inputCols[1])))
         dataset.take(1)
         return dataset  
+
+
+
+class DateEmbedding(Transformer):
+
+    def __init__(self, inputCols, outputCol) -> None:
+        super().__init__()
+        self.inputCols = inputCols
+        self.outputCol = outputCol
+        self.udf_func = udf(self._udf, IntegerType())
+
+    def _udf(self, year, month, day):
+        # Ottieni l'identificativo univoco come numero ordinale
+        date_object = datetime.date(year, month, day)
+        return date_object.toordinal()
+
+    def _transform(self, df):
+        '''
+        takes the input cols which are "year", "month", "day" and returns an integer of the form yyyy*365 + mm*30 + dd
+        '''
+        return df.withColumn(self.outputCol, self.udf_func(*self.inputCols)).drop(*self.inputCols)
     
+class DateBucketizer(Transformer):
+    
+        def __init__(self, inputCol, outputCol, buckets, min, max) -> None:
+            super().__init__()
+            self.inputCol = inputCol
+            self.outputCol = outputCol
+            self.min = min
+            self.divisor = (max - min) // buckets
+            self.udf_func = udf(self._udf, IntegerType())
+
+        def _udf(self, date):
+            return int((date - self.min) // self.divisor)
+    
+        def _transform(self, df):
+            return df.withColumn(self.outputCol, self.udf_func(F.col(self.inputCol)))
+        
+
+
+class WordEmbeddingsFinisher(Transformer):
+
+    def __init__(self, inputCol="word_embeddings", outputCol="word_embeddings_ext") -> None:
+        super().__init__()
+        self.inputCol = inputCol
+        self.outputCol = outputCol
+        self.word_udf = udf(self._udf, ArrayType(ArrayType(FloatType())))
+        
+    def _udf(self, word_embeddings):
+        return [word.embeddings for word in word_embeddings]
+        
+    def _transform(self, df):
+        return df.withColumn(self.outputCol, self.word_udf(self.inputCol))
+
+class TweetEmbeddingPreprocessing(Transformer):
+
+    def __init__(self, inputCol, outputCol):
+        self.inputCol = inputCol
+        self.outputCol = outputCol
+        self.udf_func = udf(self._udf, VectorUDT())
+
+    def _udf(self, emb):
+        return Vectors.dense(*emb[0])
+
+    def _transform(self, df):
+        # df.drop("document", "sentence", "token", "rawPrediction", "probability", "year", "month", "day", "hashtags", "mentions")
+        return df.withColumn(self.outputCol, self.udf_func(self.inputCol))
+
+
+class LabelsToIndex(Transformer):
+
+    def __init__(self, l2c) -> None:
+        super().__init__()
+        self.l2c = l2c
+        self.udf_func = udf(lambda x: l2c[x], IntegerType())
+    
+    def _transform(self, df):
+        return df.withColumn("label_idx", self.udf_func(df.label))
+
+

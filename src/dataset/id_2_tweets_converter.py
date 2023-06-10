@@ -84,24 +84,22 @@ class Id2TweetsConverter:
         cur_idx = 0
         while True:
             tw = sampled_tweets[cur_idx:cur_idx+batch_size]
+            cur_idx += batch_size
             yield self.id_2_tweet(tw)
 
 
 
 def generate_dataset():
     converter = Id2TweetsConverter()
-    for i, new_tweets in enumerate(converter.tweets_fetcher(300_000, 300)):
-        current_df_name = f"data/parquet_test{i%2}/"
-        old_df_name = f"data/parquet_test{(i+1)%2}/"
-        df = converter.spark.createDataFrame(new_tweets, ["label", "id", "year", "month", "day", "text"])
-        df = df.withColumn("text", regexp_replace("text", "^RT ", ""))
+    df_name = "data/parqurt_dataset"
+    df = converter.spark.createDataFrame(data=[["2012-obama-romney.ids", "266035659821703169", 2012, 11, 7, "i dont think many people round these parts are particularly content with obama getting re-elected but i mean its just my guess"]],
+                                         schema=["label", "id", "year", "month", "day", "text"])
+    for i, new_tweets in enumerate(converter.tweets_fetcher(100_000, 300)):
+        df_new = converter.spark.createDataFrame(new_tweets, ["label", "id", "year", "month", "day", "text"])
+        df_new = df_new.withColumn("text", regexp_replace("text", "^RT ", ""))
 
-        if old_df_name is not None:
-            old_df = converter.spark.read.parquet(old_df_name)
-            df = df.union(old_df)
-
-        # save the dataframe overwriting the old one
-        df.write.parquet(current_df_name, mode="overwrite")
+        df = df.union(df_new)
+        df.write.parquet(df_name, mode="overwrite")
 
         print("Dataframe:")
         df.show(truncate=False)
@@ -115,6 +113,16 @@ def test():
 
     print("Dataframe:")
     df.show()
+
+    # check statistics of the dataframe
+    df.describe().show()
+
+def load_and_show():
+    converter = Id2TweetsConverter()
+    df_name = "data/parqurt_dataset"
+    df = converter.spark.read.parquet(df_name)
+    print("Dataframe:")
+    df.show(truncate=False)
 
     # check statistics of the dataframe
     df.describe().show()
