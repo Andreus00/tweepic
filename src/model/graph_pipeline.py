@@ -13,14 +13,6 @@ from pyspark.ml.feature import Bucketizer
 import numpy as np
 
 
-def create_graph_pipeline():
-    l = [
-    GetTopNNeighborsTest(n_neigh=3),
-    CalculateWordDistance(),
-    ]
-    return Pipeline(stages=l)
-
-
 def create_sentence_proximity_pipeline():
     cross_join = CrossJoin()
     calculate_distance = CalculateDistance()
@@ -34,8 +26,9 @@ def create_word_and_hashtag_proximity_pipeline():
     explode_column = ExplodeColumn(inpCol="neighbors")
     closest_words = CalculateArrayDistance(inpCols=["word_embeddings", "neighbors.word_embeddings_2"], outCol="closest_words")
     closest_hashtags = CalculateArrayDistance(inpCols=["hashtags_embeddings", "neighbors.hashtags_embeddings_2"], outCol="closest_hashtags", outFields=["distance", "hashtag_couples", "hashtag_1", "hashtag_2"])
-    
-    return Pipeline(stages=[explode_column, closest_words, closest_hashtags])
+    create_edge = CreateEdge()
+
+    return Pipeline(stages=[explode_column, closest_words, closest_hashtags, create_edge])
 
 
 
@@ -97,12 +90,12 @@ class ReorderNeighbors(Transformer):
 
     def _udf_func(self, neighbors):
         # best_neighbors = []
-        return sorted(neighbors, key=lambda x: x[0])[:self.n_neighbors]
-        # neigh_len = len(neighbors)
-        # if neigh_len <= self.n_neighbors:
-        #     return neighbors
-        # scores = np.array([n[0] for n in neighbors])
-        # idxs = np.argpartition(scores, self.n_neighbors)[:self.n_neighbors]
+        # return sorted(neighbors, key=lambda x: x[0])[:self.n_neighbors]
+        neigh_len = len(neighbors)
+        if neigh_len <= self.n_neighbors:
+            return neighbors
+        scores = np.array([n[0] for n in neighbors])
+        idxs = np.argpartition(scores, self.n_neighbors)[:self.n_neighbors]
         return [neighbors[i] for i in idxs]
 
     
@@ -157,6 +150,7 @@ class CalculateArrayDistance(Transformer):
 
         # get the closest neighbors
         closest_el_idxs = np.argsort(distances, axis=None)[:k_el]
+        # closest_el_idxs = np.argpartition(distances.flatten(), k_el, axis=None)[:k_el]
 
         array_el_1, array_el_2 = np.unravel_index(closest_el_idxs, distances.shape)
 
@@ -172,3 +166,19 @@ class CalculateArrayDistance(Transformer):
         print("## CALCULATING DISTANCES ##")
         # calculate the distance between the word embeddings 
         return df.withColumn(self.outCol, self.udf_func(F.col(self.inputCols[0]), F.col(self.inputCols[1]))).drop(*self.inputCols)
+
+
+
+class CreateEdge(Transformer):
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def _transform(self, df: DataFrame):
+        print("## CREATING EDGES ##")
+        return df.select(F.col("id").alias("src"), F.col("neighbors.id_2").alias("dst"), F.array(F.col("neighbors.cosine_distance").alias("sentence_distance"), F.col("closest_words.distance").alias("word_distance"), F.col("closest_hashtags.distance").alias("hashtag_distance")).alias("relationship"))
+         
+
+
+
+################## CREATE THE GRAPH #####################

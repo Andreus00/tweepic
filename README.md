@@ -20,7 +20,6 @@ Tweets topic analyzer
   - [ ] Assign to a cluster
   - [ ] Create new cluster
   
-- [ ] 
 
 
 ### Not urgent:

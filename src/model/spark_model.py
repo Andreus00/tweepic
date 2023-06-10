@@ -27,7 +27,7 @@ from pyspark.storagelevel import StorageLevel
 from src.utils import *
 from src.model import pipeline_v2 
 from src.model import graph_pipeline
-
+from igraph import *
 
 
 def main():
@@ -93,6 +93,7 @@ def main():
             print("## SAVED ##")
         
 
+    ### SENTENCE PROXIMITY
     sentence_proximity_pipeline = graph_pipeline.create_sentence_proximity_pipeline()
     sentence_proximity_input = result.select("id", "text",  "sentence_embeddings", "word_embeddings", "hashtags_embeddings", "time_bucket")
     sentence_proximity_input.cache()
@@ -101,24 +102,28 @@ def main():
     sentence_proximity_pipeline_result = sentence_proximity_pipeline_model.transform(sentence_proximity_input)
     
 
-    ### pipeline 2
+    ### WORD AND HASHTAGS PROXIMITY
     word_and_hashtag_proximity_pipeline = graph_pipeline.create_word_and_hashtag_proximity_pipeline()
     word_and_hashtag_proximity_input = sentence_proximity_pipeline_result.select("id", "text", "word_embeddings", "hashtags_embeddings", "neighbors")
     word_and_hashtag_proximity_pipeline_model = word_and_hashtag_proximity_pipeline.fit(word_and_hashtag_proximity_input)
     word_and_hashtag_proximity_pipeline_result = word_and_hashtag_proximity_pipeline_model.transform(word_and_hashtag_proximity_input)
     word_and_hashtag_proximity_pipeline_result.show()
-    print(result.filter(result.id == 42949672964).collect()[0])        # QUERY
-    # print(result.filter(result.id == 274877906949).collect()[0].text)        # FIRST
-    # print(result.filter(result.id == 154618822660).collect()[0].text)        # FIRST
-    # print(result.filter(result.id == 8589934598).collect()[0].text)        # FIRST
+
+    ### GENERATE THE GRAPH
+    proximity_graph = GraphFrame(result.select("id", "label", "text"), word_and_hashtag_proximity_pipeline_result)
+
+    proximity_graph.inDegrees.show()
+    ig = Graph.TupleList(proximity_graph.edges.collect(), directed=True)
+    plot(ig)
+
     # print("## GRAPH DONE ##")
     # print stuff
     # graph_result.show(truncate=False)
-    sentence_embeddings = np.asarray(result.select("sentence_embeddings").collect())
+    # sentence_embeddings = np.asarray(result.select("sentence_embeddings").collect())
     # get sentence embeddings
-    sentence_embeddings = sentence_embeddings.reshape(sentence_embeddings.shape[0], -1)
+    # sentence_embeddings = sentence_embeddings.reshape(sentence_embeddings.shape[0], -1)
 
-    hashtag_embeddings = result.select("hashtags_embeddings").collect()
+    # hashtag_embeddings = result.select("hashtags_embeddings").collect()
     # for each element get the average of the embeddings if there are at least 1 hashtag otherwise put a zero vector
     # hashtag_embeddings = np.asarray([np.mean(x[0], axis=0) if len(x[0]) > 0 else np.zeros((768,)) for x in hashtag_embeddings])
     
@@ -137,8 +142,8 @@ def main():
     # get labels
 
     # plots
-    plot_cluster(sentence_embeddings, labels, None, rf_pred=None)
-    text_similarity(texts, sentence_embeddings, labels, q=10)
+    # plot_cluster(sentence_embeddings, labels, None, rf_pred=None)
+    # text_similarity(texts, sentence_embeddings, labels, q=10)
 
 
 def francesco_stuff():
