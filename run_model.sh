@@ -1,1 +1,0 @@
-python -m run_model
