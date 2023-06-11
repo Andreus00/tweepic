@@ -13,19 +13,19 @@ from pyspark.ml.feature import Bucketizer
 import numpy as np
 
 
-def create_sentence_proximity_pipeline():
+def create_sentence_proximity_pipeline(n_neighbors=5):
     cross_join = CrossJoin()
     calculate_distance = CalculateDistance()
     aggregate_neighbors = AggregateNeighbors()
-    reorder_neighbors = ReorderNeighbors(n_neighbors=20)
+    reorder_neighbors = ReorderNeighbors(n_neighbors=n_neighbors)
 
     return Pipeline(stages=[cross_join, calculate_distance, aggregate_neighbors, reorder_neighbors])
 
-def create_word_and_hashtag_proximity_pipeline():
+def create_word_and_hashtag_proximity_pipeline(n_words=3, n_hashtags=3):
 
     explode_column = ExplodeColumn(inpCol="neighbors")
-    closest_words = CalculateArrayDistance(inpCols=["word_embeddings", "neighbors.word_embeddings_2"], outCol="closest_words")
-    closest_hashtags = CalculateArrayDistance(inpCols=["hashtags_embeddings", "neighbors.hashtags_embeddings_2"], outCol="closest_hashtags", outFields=["distance", "hashtag_couples", "hashtag_1", "hashtag_2"])
+    closest_words = CalculateArrayDistance(inpCols=["word_embeddings", "neighbors.word_embeddings_2"], outCol="closest_words", k_el=n_words)
+    closest_hashtags = CalculateArrayDistance(inpCols=["hashtags_embeddings", "neighbors.hashtags_embeddings_2"], outCol="closest_hashtags", outFields=["distance", "hashtag_couples", "hashtag_1", "hashtag_2"], k_el=n_hashtags)
     create_edge = CreateEdge()
 
     return Pipeline(stages=[explode_column, closest_words, closest_hashtags, create_edge])
@@ -58,8 +58,8 @@ class CalculateDistance(Transformer):
     def _transform(self, df: DataFrame):
         print("## CALCULATING DISTANCE ##")
         return df.withColumn(self.outputCol, self.udf_func(F.col("sentence_embeddings"), F.col("sentence_embeddings_2")))
-        return df
-    
+
+
 class AggregateNeighbors(Transformer):
 
     def __init__(self, inputcols = ["cosine_distance", "id_2", "text_2", "word_embeddings_2", "hashtags_embeddings_2"], outputCol = "neighbors"):

@@ -17,7 +17,7 @@ import re
 
 
 
-def create_embeddings_pipeline():
+def create_embeddings_pipeline(n_buckets=60):
     http_filter = HttpCleaner(inputCol="text", outputCol="text")
     document_assembler = DocumentAssembler() \
         .setInputCol("text") \
@@ -83,7 +83,7 @@ def create_embeddings_pipeline():
         inputCols=["year", "month", "day"],
         outputCol="date_embeddings"
     )
-    date_bucketizer = DateBucketizer("date_embeddings", "time_bucket", 60, datetime.date(2012, 1, 1).toordinal(), datetime.date(2017, 1, 1).toordinal())
+    date_bucketizer = DateBucketizer("date_embeddings", "time_bucket", n_buckets, datetime.date(2012, 1, 1).toordinal(), datetime.date(2017, 1, 1).toordinal())
     
     # PUNCTUATION REMOVER
     embeddings_punctuation_remover = ElementRemover(

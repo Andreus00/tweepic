@@ -28,21 +28,24 @@ from src.utils import *
 from src.model import pipeline_v2 
 from src.model import graph_pipeline
 from igraph import *
+import config
 
 
 def main():
 
-    SAVE_INTERMEDIATE = False
-    LOAD_INTERMEDIATE = True
+    SAVE_EMBEDDINGS_INTERMEDIATE = False
+    LOAD_EMBEDDINGS_INTERMEDIATE = True
+    SAVE_PROXIMITY_INTERMEDIATE = True
+    LOAD_PROXIMITY_INTERMEDIATE = False
     # create label to index dictionary
     l2c = init_labels()
     
     # init spark session
-    spark = sparknlp.start(gpu=True, memory="25G", params={"spark.jars.packages": "graphframes:graphframes:0.8.1-spark3.0-s_2.12",
-                                                           "spakr.driver.memory": "25G",
-                                                           "spark.executor.memory": "2G",
-                                                           "spark.driver.maxResultSize": "25G",
-                                                           "spark.memory.fraction": "0.8",
+    spark = sparknlp.start(gpu=True, memory=config.spark_memory, params={"spark.jars.packages": "graphframes:graphframes:0.8.1-spark3.0-s_2.12",
+                                                           "spakr.driver.memory": config.spark_memory,
+                                                           "spark.executor.memory": config.executor_memory,
+                                                           "spark.driver.maxResultSize": config.max_result_memory,
+                                                           "spark.memory.fraction": config.in_memory_fraction,
                                                            "spark.sql.adaptive.enabled": "true",
                                                            "spark.sql.adaptive.skewJoin.enabled": "true",
                                                            "spark.sql.shuffle.partitions": "40",})
@@ -56,13 +59,11 @@ def main():
 
     # g = GraphFrame(v, e)
     # load data
-    if LOAD_INTERMEDIATE:
-        result = spark.read.parquet("intermediate_result.parquet")
-        result = result.drop_duplicates(["text"])   
-        result = result.withColumn("id", F.monotonically_increasing_id())
+    if LOAD_EMBEDDINGS_INTERMEDIATE:
+        result = spark.read.parquet(config.intermediate_embeddings_path)
         print("## LOADED ##")
     else:
-        df = load_data("data/parquet_test0", spark)
+        df = load_data(config.dataset_path, spark)
         # cast year, month e day to int
         df = df.withColumn("year", F.col("year").cast("int"))
         df = df.withColumn("month", F.col("month").cast("int"))
@@ -71,9 +72,9 @@ def main():
         # get label count
         label_count = 31 #  len(df.groupBy("label").count().collect())
 
-            
+
         # create the embedding pipeline
-        nlp_pipeline = pipeline_v2.create_embeddings_pipeline()
+        nlp_pipeline = pipeline_v2.create_embeddings_pipeline(n_buckets=config.n_buckets)
 
         # fit and transform pipeline
         pipeline_model = nlp_pipeline.fit(df)
@@ -88,33 +89,40 @@ def main():
         df.unpersist(blocking=True)
 
 
-        if SAVE_INTERMEDIATE:
-            result.write.mode("overwrite").parquet("intermediate_result.parquet")
+        if SAVE_EMBEDDINGS_INTERMEDIATE:
+            result.write.mode("overwrite").parquet(config.intermediate_embeddings_path)
             print("## SAVED ##")
         
 
     ### SENTENCE PROXIMITY
-    sentence_proximity_pipeline = graph_pipeline.create_sentence_proximity_pipeline()
-    sentence_proximity_input = result.select("id", "text",  "sentence_embeddings", "word_embeddings", "hashtags_embeddings", "time_bucket")
-    sentence_proximity_input.cache()
-    result.unpersist(blocking=True)
-    sentence_proximity_pipeline_model = sentence_proximity_pipeline.fit(sentence_proximity_input)
-    sentence_proximity_pipeline_result = sentence_proximity_pipeline_model.transform(sentence_proximity_input)
+    if LOAD_PROXIMITY_INTERMEDIATE:
+        sentence_proximity_input = spark.read.parquet(config.intermediate_proximity_path)
+        sentence_proximity_input.show()
+    else:
+        sentence_proximity_pipeline = graph_pipeline.create_sentence_proximity_pipeline(n_neighbors=config.n_neighbors)
+        sentence_proximity_input = result.select("id", "text",  "sentence_embeddings", "word_embeddings", "hashtags_embeddings", "time_bucket")
+        result.unpersist(blocking=True)
+        sentence_proximity_input.cache()
+        sentence_proximity_pipeline_model = sentence_proximity_pipeline.fit(sentence_proximity_input)
+        sentence_proximity_pipeline_result = sentence_proximity_pipeline_model.transform(sentence_proximity_input)
     
 
-    ### WORD AND HASHTAGS PROXIMITY
-    word_and_hashtag_proximity_pipeline = graph_pipeline.create_word_and_hashtag_proximity_pipeline()
-    word_and_hashtag_proximity_input = sentence_proximity_pipeline_result.select("id", "text", "word_embeddings", "hashtags_embeddings", "neighbors")
-    word_and_hashtag_proximity_pipeline_model = word_and_hashtag_proximity_pipeline.fit(word_and_hashtag_proximity_input)
-    word_and_hashtag_proximity_pipeline_result = word_and_hashtag_proximity_pipeline_model.transform(word_and_hashtag_proximity_input)
-    word_and_hashtag_proximity_pipeline_result.show()
+        ### WORD AND HASHTAGS PROXIMITY
+        word_and_hashtag_proximity_pipeline = graph_pipeline.create_word_and_hashtag_proximity_pipeline(n_words=config.n_words, n_hashtags=config.n_hashtags)
+        word_and_hashtag_proximity_input = sentence_proximity_pipeline_result.select("id", "text", "word_embeddings", "hashtags_embeddings", "neighbors")
+        word_and_hashtag_proximity_pipeline_model = word_and_hashtag_proximity_pipeline.fit(word_and_hashtag_proximity_input)
+        word_and_hashtag_proximity_pipeline_result = word_and_hashtag_proximity_pipeline_model.transform(word_and_hashtag_proximity_input)
+        if SAVE_PROXIMITY_INTERMEDIATE:
+            word_and_hashtag_proximity_pipeline_result.write.parquet(config.intermediate_proximity_path, mode="overwrite")
+            exit()
+
 
     ### GENERATE THE GRAPH
     proximity_graph = GraphFrame(result.select("id", "label", "text"), word_and_hashtag_proximity_pipeline_result)
 
     proximity_graph.inDegrees.show()
     ig = Graph.TupleList(proximity_graph.edges.collect(), directed=True)
-    plot(ig)
+    plot(ig).save("graph.png")
 
     # print("## GRAPH DONE ##")
     # print stuff
