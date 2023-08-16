@@ -165,4 +165,15 @@ cython_debug/
 
 models
 data
-intermediate_result.parquet
+intermediate_result
+word_and_hashtags_checkpoint
+edge_clasifier_checkpoint
+final_graph.csv
+final_nodes.csv
+images
+intermediate_result
+online_sentence_checkpoint
+online_word_and_hashtag_checkpoint
+sentence_checkpoint
+test_edge_clasifier_checkpoint
+word_and_hashtags_checkpoint

@@ -5,7 +5,8 @@ from scipy.spatial import distance
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 import pyspark.sql.functions as F
-
+import config
+import numpy as np
 
 def load_data(path, spark):
     # load dataset
@@ -47,54 +48,20 @@ def slice_df(df, spark, start, end):
 
 
 def init_labels():
-
-    classes = [
-        '2014-gazaunderattack.ids',
-        '2013-boston-marathon-bombing.ids',
-        '2014-ebola.ids',
-        '2012-uselection.ids',
-        '2016-sismoecuador.ids',
-        '2012-obama-romney.ids',
-        '2014-indyref.ids',
-        '2012-sxsw.ids',
-        '2015-parisattacks.ids',
-        '2016-hijacked-plane-cyprus.ids',
-        '2015-refugeeswelcome.ids',
-        '2014-stpatricksday.ids',
-        '2012-mexican-election.ids',
-        '2012-superbowl.ids',
-        '2016-panamapapers.ids',
-        '2016-irish-ge16.ids',
-        '2015-nepalearthquake.ids',
-        '2015-hurricanepatricia.ids',
-        '2014-ferguson.ids',
-        '2014-ottawashooting.ids',
-        '2014-hongkong-protests.ids',
-        '2014-typhoon-hagupit.ids',
-        '2012-hurricane-sandy.ids',
-        '2012-euro2012.ids',
-        '2015-charliehebdo.ids',
-        '2015-germanwings-crash.ids',
-        '2016-euro2016.ids',
-        '2016-brexit.ids',
-        '2016-brussels-airport-explossion.ids',
-        '2016-lahoreblast.ids',
-        '2014-sydneysiege.ids',
-        'chatgpt'
-    ]
+    classes = config.classes
     classes.sort()
 
     return {l:i for i,l in enumerate(classes)}
 
 
-def plot_cluster(sentence_embeddings, labels, clusters, rf_pred=None):
+def plot_cluster(sentence_embeddings, labels):
 
     # two plots side by side
     # fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
 
     pca = PCA(n_components=3)
     pca_result = pca.fit_transform(sentence_embeddings)
-    fig, (ax1,ax2, ax3) = plt.subplots(1, 3, subplot_kw=dict(projection='3d'), figsize=(12, 4))
+    fig, ax1 = plt.subplots(1,1, subplot_kw=dict(projection='3d'), figsize=(12, 4))
     # ax1 = fig.add_subplot(121, projection='3d')
     ax1.set_xlabel("PC1")
     ax1.set_ylabel("PC2")
@@ -103,42 +70,69 @@ def plot_cluster(sentence_embeddings, labels, clusters, rf_pred=None):
     ax1.scatter(pca_result[:,0], pca_result[:,1], pca_result[:,2], cmap='viridis', c=labels, label=labels)
     ax1.grid()
 
-    if clusters:
-
-        # ax2 = fig.add_subplot(122, projection='3d')
-        ax2.set_xlabel("PC1")
-        ax2.set_ylabel("PC2")
-        ax2.set_zlabel("PC3")
-        ax2.set_title("Clusters")
-        ax2.scatter(pca_result[:,0], pca_result[:,1], pca_result[:,2], cmap='viridis', c=clusters, label=clusters)
-        ax2.grid()
-
-    if rf_pred:
-
-        # ax2 = fig.add_subplot(122, projection='3d')
-        ax3.set_xlabel("PC1")
-        ax3.set_ylabel("PC2")
-        ax3.set_zlabel("PC3")
-        ax3.set_title("RF")
-        ax3.scatter(pca_result[:,0], pca_result[:,1], pca_result[:,2], cmap='viridis', c=rf_pred, label=rf_pred)
-        ax3.grid()
 
     plt.show()
-    plt.savefig("pca.png")
+    fig.savefig("images/pca.png")
 
 
-def text_similarity(texts, sentence_embeddings, labels, q=0):
+def text_similarity(texts, sentence_embeddings, labels, q=0, input_tweet=None, sent_emb=None):
     # q = 0 # texts.index("Match passionnant entre l'Angleterre et l'Italie aujourd'hui. <sep> 2012 <sep> 6 <sep> 25 <sep> <sep>")
     query = texts[q]  # Orribile attentato alla rambla questa notte. <sep> 2017 <sep> 8 <sep> 17 <sep> <sep>
+    if input_tweet is not None:
+        query = input_tweet
+        
     d = {}
     for i,tweet in enumerate(texts):
         if i == q:
             continue
-        sim = 1-distance.cosine(sentence_embeddings[q],sentence_embeddings[i])
+        if sent_emb is not None:
+            sim = 1-distance.cosine(sent_emb, sentence_embeddings[i][0].toArray())
+        else:
+            sim = 1-distance.cosine(sentence_embeddings[q],sentence_embeddings[i])
         d[tweet] = (labels[i], sim)
         
-    print('Most similar to: ',query, "Class: ", labels[q])
+    print('Most similar to: ',query) # , "Class: ", labels[q])
     print('----------------------------------------')
+    i = 0
     for idx,x in enumerate(sorted(d.items(), key=lambda x: x[1][1], reverse=True)):
+        if i == 10:
+            break
         print(idx+1, "Sim: ", round(x[1][1],2), "Class: ", x[1][0], "Tweet: ", x[0])
+        i += 1
+
+
+
+
+def plot_online_PCA(sentence_embeddings, labels, tweet, tweet_label):
+
+    # add tweet to sentence_embeddings
+    sentence_embeddings = [x[0].toArray() for x in sentence_embeddings]
+    sentence_embeddings = np.vstack((sentence_embeddings, tweet))
+    labels = np.append(labels, tweet_label)
+
+    pca = PCA(n_components=3)
+    pca_result = pca.fit_transform(sentence_embeddings)
+    
+    fig = plt.figure(figsize=(12, 4))
+    ax1 = fig.add_subplot(111, projection='3d')
+    ax1.set_xlabel("PC1")
+    ax1.set_ylabel("PC2")
+    ax1.set_zlabel("PC3")
+    ax1.set_title("PCA")
+    
+    # Plot all points in gray
+    ax1.scatter(pca_result[:, 0], pca_result[:, 1], pca_result[:, 2], cmap='gray', c='gray', label='Other')
+    
+    # Plot points of class "x" in a different color
+    x_indices = np.where(labels == tweet_label)[0]
+    ax1.scatter(pca_result[x_indices, 0], pca_result[x_indices, 1], pca_result[x_indices, 2], cmap='viridis', c='green', label=tweet_label)
+
+    # plot tweet in red
+    ax1.scatter(pca_result[-1, 0], pca_result[-1, 1], pca_result[-1, 2], cmap='viridis', c='red', label='Tweet')
+    
+    ax1.grid()
+    ax1.legend()
+    
+    plt.show()
+
 

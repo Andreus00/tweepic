@@ -13,5 +13,8 @@ matplotlib
 twint
 pyarrow
 sentencepiece
-ipygraph
+ipyplot
+igraph
 cairocffi
+graphistry
+plotly
